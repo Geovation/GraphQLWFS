@@ -1,4 +1,4 @@
-from flask import Flask, escape, request
+from flask import escape
 
 def graphqlwfs(request):
     """HTTP Cloud Function.
@@ -20,12 +20,3 @@ def graphqlwfs(request):
     else:
         name = 'World'
     return 'Hello {}!'.format(escape(name))
-
-# the following code is tu run it locally. Just run "local.sh"
-app = Flask(__name__)
-@app.route('/')
-def local():
-    return graphqlwfs(request)
-
-if __name__ == '__main__':
-    app.run()

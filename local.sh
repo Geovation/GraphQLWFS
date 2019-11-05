@@ -18,6 +18,6 @@ pip install --upgrade -r requirements.txt
 # save packages
 # pip freeze > requirements.txt
 
-export FLASK_APP=graphqlwfs
+export FLASK_APP=local
 export FLASK_ENV=development
 flask run
