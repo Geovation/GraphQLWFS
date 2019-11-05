@@ -1,0 +1,5 @@
+#pip
+google-cloud-storage
+xmltodict
+pytest
+flask
