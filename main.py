@@ -19,4 +19,4 @@ def graphqlwfs(request):
         name = request_args['name']
     else:
         name = 'World'
-    return 'Hello {}!'.format(escape(name))
+    return 'Hello 2 {}!'.format(escape(name))
