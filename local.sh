@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # google component
-gcloud components install beta
-gcloud components update
+# gcloud components install beta
+# gcloud components update
 
 # python env
 python -m venv venv

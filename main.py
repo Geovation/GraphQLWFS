@@ -1,6 +1,10 @@
+import requests
 from flask import escape
 
+
+
 def graphqlwfs(request):
+    response = requests.get('http://api.plos.org/search?q=title:DNA')
     """HTTP Cloud Function.
     Args:
         request (flask.Request): The request object.
@@ -19,4 +23,13 @@ def graphqlwfs(request):
         name = request_args['name']
     else:
         name = 'World'
-    return 'Hello {}!'.format(escape(name))
+    return 'Hello {}! '.format(escape(name)) + "Message returns {}".format(escape(response.json()))
+    response = requests.get('https://api.github.com')
+    if response:
+        print('Success!')
+    else:
+        print('An error has occurred.')
+
+    def requestInputs(url):
+        pass
+
