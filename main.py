@@ -23,7 +23,7 @@ def graphqlwfs(request):
         name = request_args['name']
     else:
         name = 'World'
-    return 'Hello {}! '.format(escape(name)) + "Message returns {}".format(escape(response.json()))
+    return response.json()
     
     
     
@@ -36,3 +36,4 @@ def graphqlwfs(request):
     # def requestInputs(url):
     #     pass
 
+# 'Hello {}! '.format(escape(name)) + 
