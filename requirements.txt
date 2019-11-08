@@ -3,3 +3,4 @@ google-cloud-storage
 xmltodict
 pytest
 flask
+requests
