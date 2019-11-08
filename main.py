@@ -4,7 +4,7 @@ from flask import escape
 
 
 def graphqlwfs(request):
-    response = requests.get('http://api.plos.org/search?q=title:DNA')
+    response = requests.get('https://www.mapping.cityoflondon.gov.uk/arcgis/services/INSPIRE/MapServer/WFSServer?request=GetFeature&service=WFS&typename=INSPIRE:Licensed_Premises&outputFormat=GEOJSON&count=2')
     """HTTP Cloud Function.
     Args:
         request (flask.Request): The request object.
@@ -24,12 +24,15 @@ def graphqlwfs(request):
     else:
         name = 'World'
     return 'Hello {}! '.format(escape(name)) + "Message returns {}".format(escape(response.json()))
-    response = requests.get('https://api.github.com')
-    if response:
-        print('Success!')
-    else:
-        print('An error has occurred.')
+    
+    
+    
+    # response = requests.get('https://api.github.com')
+    # if response:
+    #     print('Success!')
+    # else:
+    #     print('An error has occurred.')
 
-    def requestInputs(url):
-        pass
+    # def requestInputs(url):
+    #     pass
 
