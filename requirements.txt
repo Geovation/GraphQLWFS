@@ -3,6 +3,4 @@ google-cloud-storage
 xmltodict
 pytest
 flask
-graphene
-django
 requests
