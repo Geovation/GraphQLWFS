@@ -1,13 +1,14 @@
 import requests
-from flask import escape
-import json 
+# from flask import escape
+# import json 
 
 
 
 def graphqlwfs(url):
-    url = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&typename=osfeatures:BoundaryLine_CommunityWard&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0&outputformat=geoJSON"
-    # &outputFormat=GEOJSON
-    response = requests.get(url+ "&outputFormat=GEOJSON")
+    url = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetCapabilities&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0"
+    filterRequest = "&typenames=osfeatures:Sites_AccessPoint&outputformat=geoJSON"
+    newUrl = str(url.replace("GetCapabilities", "GetFeature") + filterRequest)
+    response = requests.get(newUrl)
     # """HTTP Cloud Function.
     # Args:
     #     request (flask.Request): The request object.
@@ -26,17 +27,9 @@ def graphqlwfs(url):
     #     name = request_args['name']
     # else:
     #     name = 'World'
-    return response.json()["features"][0]
 
+    features = response.json()
+
+    return features
 
     
-    # response = requests.get('https://api.github.com')
-    # if response:
-    #     print('Success!')
-    # else:
-    #     print('An error has occurred.')
-
-    # def requestInputs(url):
-    #     pass
-
-# 'Hello {}! '.format(escape(name)) + 
