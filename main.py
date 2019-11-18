@@ -6,8 +6,10 @@ import requests
 
 def graphqlwfs(url):
     url = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetCapabilities&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0"
-    filterRequest = "&typenames=osfeatures:Sites_AccessPoint&outputformat=geoJSON"
-    newUrl = str(url.replace("GetCapabilities", "GetFeature") + filterRequest)
+    filterRequest = "&typenames=osfeatures:BoundaryLine_PollingDistrict&outputformat=geoJSON"
+    count = 20
+
+    newUrl = str(url.replace("GetCapabilities", "GetFeature") + filterRequest + "&count=" + str(count))
     response = requests.get(newUrl)
     # """HTTP Cloud Function.
     # Args:
