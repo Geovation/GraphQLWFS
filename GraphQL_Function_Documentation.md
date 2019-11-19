@@ -38,7 +38,7 @@ Filter Request:
 
 You can also do filter requests with WFS based on properties, and property value. To do this, you can add the query string, "&filter=" and add the following GML style code below as the filter value.
 
-<Filter>
+```<Filter>
     <PropertyIsEqualTo>
         <PropertyName>
         *Property Name goes here, which is property constant in the function*
@@ -47,6 +47,6 @@ You can also do filter requests with WFS based on properties, and property value
         *Property Value goes here, which is the constant, PropertyValue, in the function*
         </Literal>
     </PropertyIsEqualTo>
-</Filter>
+</Filter>```
 
 With the function, you can change the value and name of the properties based on your WFS and filter accordingly. 
