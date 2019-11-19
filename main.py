@@ -1,16 +1,33 @@
 import requests
 # from flask import escape
-# import json 
+import json 
 
 
 
 def graphqlwfs(url):
     url = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetCapabilities&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0"
-    filterRequest = "&typenames=osfeatures:BoundaryLine_PollingDistrict&outputformat=geoJSON"
-    count = 20
+    queryString = "&typenames=osfeatures:BoundaryLine_PollingDistrict&outputformat=geoJSON"
+    count = 100
+    property = "Ward"
+    propertyValue = "Ely North Ward"
 
-    newUrl = str(url.replace("GetCapabilities", "GetFeature") + filterRequest + "&count=" + str(count))
+    filterString = "&filter=<Filter><PropertyIsEqualTo><PropertyName>" + str(property) + "</PropertyName><Literal>" + str(propertyValue) + "</Literal></PropertyIsEqualTo></Filter>"
+
+    
+    
+    newUrl = str(url.replace("GetCapabilities", "GetFeature") + queryString + "&count=" + str(count)+ filterString)
     response = requests.get(newUrl)
+
+    features = response.json()
+
+    return features
+            
+      
+        
+
+            
+
+
     # """HTTP Cloud Function.
     # Args:
     #     request (flask.Request): The request object.
@@ -29,9 +46,5 @@ def graphqlwfs(url):
     #     name = request_args['name']
     # else:
     #     name = 'World'
-
-    features = response.json()
-
-    return features
 
     
