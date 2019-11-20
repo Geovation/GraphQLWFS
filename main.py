@@ -6,22 +6,30 @@ import json
 
 def graphqlwfs(url):
     url = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetCapabilities&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0"
-    queryString = "&typenames=osfeatures:BoundaryLine_PollingDistrict&outputformat=geoJSON"
+    
 
-
-   
 
    
     request_json = request.get_json(silent=True)
     request_args = request.args
 
+
+    if request_json and 'typenames' in request_json:
+        typenames = request_json['typenames']
+    elif request_args and 'typenames' in request_args:
+        typenames = request_args['typenames']
+    else:
+        typenames = "Please Enter typename"
+
+    
+    queryString = "&typenames=" + str(typenames) + "&outputformat=geoJSON"
     
     if request_json and 'count' in request_json:
         count = request_json['count']
     elif request_args and 'count' in request_args:
         count = request_args['count']
     else:
-        count = 4000
+        count = 100
 
     if request_json and 'property' in request_json:
         property = request_json['property']
