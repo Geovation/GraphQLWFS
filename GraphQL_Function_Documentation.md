@@ -50,3 +50,20 @@ You can also do filter requests with WFS based on properties, and property value
 </Filter>```
 
 With the function, you can change the value and name of the properties based on your WFS and filter accordingly. 
+
+
+Getting parameters from requests:
+
+Using the initial test "if" function: 
+    if request_json and 'count' in request_json:
+        count = request_json['count']
+    elif request_args and 'count' in request_args:
+        count = request_args['count']
+    else:
+        count = 100
+
+I was able to get the parameters from the requests. An if function was created for each parameter, propertyValue, propertyType, count and typename. For a start, they are all separate functions, but the next step would be to simplify this into one function, saving many lines of code. 
+
+Encoding issue:
+
+In addition, we have encountered an encoding issue. For example, if we want to filter the geoJson, so it returns Wards based on their Ward name, if the Ward name has an "&" character, it does not return any values on the server. I tried to replace the "&" character with "%26" (from the ASCII encoding reference), but the server ends up returning an encoding error. Aside from that, the function works fine. 
