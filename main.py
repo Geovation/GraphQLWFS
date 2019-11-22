@@ -1,64 +1,80 @@
 import requests
-from flask import Flask, escape, request
-import json
-
-
-
-def graphqlwfs(url):
-    url = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetCapabilities&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0"
-    queryString = "&typenames=osfeatures:BoundaryLine_PollingDistrict&outputformat=geoJSON"
-    # count = 100
-    # property = "Ward"
-    # propertyValue = "Ely North Ward"
-
-    request_json = request.get_json(silent=True)
-    request_args = request.args
-
-
-    if 'count' in request_args:
-        count = request_args['count']
-    else:
-        count = 100
-
-    if request_json and 'property' in request_json:
-        property = request_json['property']
-    elif request_args and 'property' in request_args:
-        property = request_args['property']
-    else:
-        property = ""
-
-    if request_json and 'propertyValue' in request_json:
-        if '&' in request_json['propertyValue']:
-            propertyValue = request_json['propertyValue']
-            propertyValue = propertyValue.replace(" & ", " ")
-        propertyValue = request_json['propertyValue']
-    elif request_args and 'propertyValue' in request_args:
-        if '&' in request_args['propertyValue']:
-            propertyValue = request_args['propertyValue']
-            propertyValue = propertyValue.replace(" & ", " ")
-        propertyValue = request_args['propertyValue']
-    else:
-        propertyValue = ""
-
-
-    filterString = "&filter=<Filter><PropertyIsEqualTo><PropertyName>" + str(property) + "</PropertyName><Literal>" + str(propertyValue) + "</Literal></PropertyIsEqualTo></Filter>"
-
-    if property == "":
-        filterString = ""
-    if propertyValue == "":
-        filterString = ""
-
-
-    newUrl = str(url.replace("GetCapabilities", "GetFeature") + queryString + "&count=" + str(count) + filterString)
-    response = requests.get(newUrl)
-
+"""HTTP Cloud Function.
+Args:
+    request (flask.Request): The request object.
+    <http://flask.pocoo.org/docs/1.0/api/#flask.Request>
+Returns:
+    The response text, or any set of values that can be turned into a
+    Response object using `make_response`
+    <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
+"""
+def graphqlwfs(request):
+    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0&outputformat=geoJSON"
+    # request_json = request.get_json(silent=True)
+    typeNames = request.args.get("typeNames", default="")
+    count = request.args.get("count", default=100)
+    PropertyName = request.args.get("PropertyName", default="")
+    propertyValue = request.args.get("propertyValue", default="")
+    payload = {
+        'typeNames': typeNames,
+        'count': count
+    }
+    if property == "" or propertyValue == "":
+        filter = """
+            <Filter>
+                <PropertyIsEqualTo>
+                    <PropertyName>{0}</PropertyName>
+                    <Literal>{1}</Literal>
+                </PropertyIsEqualTo>
+            </Filter>
+        """.format(PropertyName, propertyValue)
+        payload["filter"] = filter
+    response = requests.get(wfsApiBaseUrl, params=payload)
+    print(">>>>>>>>>>>>>>>> payload", payload)
+    print(">>>>>>>>>>>>>>>>", response.url)
     features = response.json()
-
-    # query_has = False
-    # if 'count' not in url :
-    #     query_has = True
-
-    # return features['features'][0]['properties']['County']
-    # return str(query_has)
-
     return features
+seb 11:39 AM
+import requests
+"""HTTP Cloud Function.
+Args:
+    request (flask.Request): The request object.
+    <http://flask.pocoo.org/docs/1.0/api/#flask.Request>
+Returns:
+    The response text, or any set of values that can be turned into a
+    Response object using `make_response`
+    <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
+"""
+def graphqlwfs(request):
+    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0&outputformat=geoJSON"
+    # request_json = request.get_json(silent=True)
+    typeNames = request.args.get("typeNames", default="")
+    count = request.args.get("count", default=100)
+    PropertyName = request.args.get("PropertyName", default="")
+    propertyValue = request.args.get("propertyValue", default="")
+    payload = {
+        'typeNames': typeNames,
+        'count': count
+    }
+    if property == "" or propertyValue == "":
+        filter = """
+            <Filter>
+                <PropertyIsEqualTo>
+                    <PropertyName>{0}</PropertyName>
+                    <Literal>{1}</Literal>
+                </PropertyIsEqualTo>
+            </Filter>
+        """.format(PropertyName, propertyValue)
+        payload["filter"] = filter
+    response = requests.get(wfsApiBaseUrl, params=payload)
+    print(">>>>>>>>>>>>>>>> payload", payload)
+    print(">>>>>>>>>>>>>>>> url", response.url)
+    print(">>>>>>>>>>>>>>>> text", response.text)
+    print(">>>>>>>>>>>>>>>> headers", response.headers)
+    print(">>>>>>>>>>>>>>>> status_code", response.status_code)
+    if status_code != 200:
+        // TODO parse XML which is in response.text
+        return "NO NO NOc ccccc"
+    else:
+        features = response.json()
+        return features
