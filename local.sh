@@ -6,7 +6,7 @@
 
 # python env
 python -m venv venv
-source venv/bin/activate
+source venv/Scripts/activate
 pip install --upgrade pip
 pip install --upgrade -r requirements.txt
 # pip install --upgrade google-cloud-storage
