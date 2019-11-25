@@ -1,4 +1,5 @@
 import requests
+# import graphene
 
 """HTTP Cloud Function.
 Args:
@@ -9,6 +10,13 @@ Returns:
     Response object using `make_response`
     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
 """
+
+# class Query(graphene.ObjectType):
+#   hello = graphene.String(name=graphene.String(default_value="World"))
+#
+#   def resolve_hello(self, info, name):
+#     return 'Hello ' + name
+#
 def graphqlwfs(request):
     wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0&outputformat=geoJSON"
     # request_json = request.get_json(silent=True)
@@ -39,7 +47,7 @@ def graphqlwfs(request):
     headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
     statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
     if response.status_code != 200:
-        return "Please enter a typeName!!! " + str(urlResponse) + str(txtResponse) + str(headerResp) + str(propertyName) + str(propertyValue) +str(payload) 
+        return "Please enter a typeName!!! " + str(urlResponse) + str(txtResponse) + str(headerResp) + str(propertyName) + str(propertyValue) +str(payload)
     else:
         features = response.json()
     return features
