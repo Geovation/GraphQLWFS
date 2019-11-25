@@ -1,4 +1,6 @@
 import requests
+import os
+
 """HTTP Cloud Function.
 Args:
     request (flask.Request): The request object.
@@ -9,7 +11,8 @@ Returns:
     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
 """
 def graphqlwfs(request):
-    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key=pxKGVMtaA9X2382DdJA4h3hAi6mkXt60&version=2.0.0&outputformat=geoJSON"
+    OS_KEY = os.getenv('OS_KEY', '????????')
+    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
     # request_json = request.get_json(silent=True)
     typeNames = request.args.get("typeNames", default="osfeatures:BoundaryLine_PollingDistrict")
     count = request.args.get("count", default=100)
