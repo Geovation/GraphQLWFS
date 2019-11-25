@@ -1,3 +1,8 @@
+secrets:
+  - kmsKeyName: projects/gcp-training-144309/locations/global/keyRings/graphQL/cryptoKeys/live
+    secretEnv:
+      OS_KEY: CiQAOoKuDAjp/eUclkhxFwsl1LxBJxCmOtMHpZBU1VL/o75cszMSSQC7QXhlOciJ29/0v7Ybwt6movJU+4J8M1jRv+SI1SEkfC9HenEzgj3UuEBVjw+8NH9HPUpXzKOUMcDGoK3kySjD3vE/YamjHVc=
 steps:
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['functions', 'deploy', 'graphqlwfs', '--runtime', 'python37', '--trigger-http']
+    args: ['functions', 'deploy', 'graphqlwfs', '--runtime', 'python37', '--trigger-http', '--set-env-vars', 'OS_KEY=$OS_KEY']
+    secretEnv: ['OS_KEY']
