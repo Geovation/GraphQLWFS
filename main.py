@@ -1,5 +1,4 @@
 import requests
-
 """HTTP Cloud Function.
 Args:
     request (flask.Request): The request object.
@@ -14,23 +13,21 @@ def graphqlwfs(request):
     # request_json = request.get_json(silent=True)
     typeNames = request.args.get("typeNames", default="osfeatures:BoundaryLine_PollingDistrict")
     count = request.args.get("count", default=100)
-    propertyName = request.args.get("propertyName", default=None)
-    propertyValue = request.args.get("propertyValue", default=None)
+    PropertyName = request.args.get("PropertyName", default=None)
+    Literal = request.args.get("Literal", default=None)
     payload = {
         'typeNames': typeNames,
-        'count': count,
-        'propertyName': propertyName,
-        "propertyValue": propertyValue
+        'count': count
     }
-    if propertyName == "" or propertyValue == "":
+    if PropertyName != None and Literal != None:
         filter = """
                 <Filter>
                     <PropertyIsEqualTo>
-                        <propertyName>{0}</propertyName>
+                        <PropertyName>{0}</PropertyName>
                         <Literal>{1}</Literal>
                     </PropertyIsEqualTo>
                 </Filter>
-            """.format(propertyName, propertyValue)
+            """.format(PropertyName, Literal)
         payload["filter"] = filter
     response = requests.get(wfsApiBaseUrl, params=payload)
     payloader = print(">>>>>>>>>>>>>>>> payload", payload)
@@ -39,11 +36,10 @@ def graphqlwfs(request):
     headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
     statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
     if response.status_code != 200:
-        return "Please enter a typeName!!! " + str(urlResponse) + str(txtResponse) + str(headerResp) + str(propertyName) + str(propertyValue) +str(payload) 
+        return "Please enter a typeName!!! " + str(urlResponse) + str(txtResponse) + str(headerResp) + str(PropertyName) + str(Literal) +str(payload)
     else:
         features = response.json()
     return features
-
     # if status_code != 200:
     #     return "NOOOOOO!!!"
     # #     return response.json()
