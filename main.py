@@ -12,20 +12,6 @@ Returns:
     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
 """
 
-# class Query(graphene.ObjectType):
-#     hello = graphene.String(description='A typical hello world')
-#
-#     def resolve_hello(self, info):
-#         return 'World'
-#
-# schema = graphene.Schema(query=Query)
-# query = '''
-#     query SayHello {
-#       hello
-#     }
-# '''
-# result = schema.execute(query)
-# print (result.value)
 class Query(graphene.ObjectType):
     # this defines a Field `hello` in our Schema with a single Argument `name`
     first_name = graphene.String(name=graphene.String(default_value="Aymar"))
