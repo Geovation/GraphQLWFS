@@ -17,3 +17,9 @@ To run in locally
 export OS_KEY=1234567890
 ./local.sh
 ```
+
+Example:
+
+```
+curl 127.0.0.1:5000 -H "Content-Type: application/json" -d '{ hello(count: 5, propertyName: "Ward", literal: "Bottisham Ward") }'
+```
