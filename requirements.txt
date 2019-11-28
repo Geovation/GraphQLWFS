@@ -4,8 +4,4 @@ xmltodict
 pytest
 flask
 requests
-<<<<<<< HEAD
 graphene
-=======
-graphene
->>>>>>> 36f6d5205326c486a19c74ccf1ba56317ed56a75
