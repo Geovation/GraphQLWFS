@@ -41,10 +41,18 @@ class Query(graphene.ObjectType):
       typeNames=graphene.String(default_value="osfeatures:BoundaryLine_PollingDistrict"), 
       propertyName=graphene.String(default_value=""), 
       literal=graphene.String(default_value="")
-      )
+  )   
+
+  boundaryLinePollingDistrict = graphene.String( 
+      first=graphene.Int(default_value=10),
+      ward=graphene.String(default_value="Bottisham Ward")
+  )
 
   def resolve_hello(self, info, count, typeNames, propertyName, literal):
     return fetchFeaturesFromWFS(count, typeNames, propertyName, literal)
+
+  def resolve_boundaryLinePollingDistrict(self, info, first, ward):
+    return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:BoundaryLine_PollingDistrict", propertyName="ward", literal=ward) 
 
 """HTTP Cloud Function.
 Args:
