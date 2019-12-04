@@ -31,20 +31,25 @@ def fetchFeaturesFromWFS(count, typeNames, propertyName, literal):
         statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
         return "Error: Check your logs"
 
+    # return response.json()['features'][0]["properties"]
     return response.json()['features']
 
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
 class Query(graphene.ObjectType):
-  hello = graphene.String(
+    hello = graphene.String(
       count=graphene.Int(default_value=10),
       typeNames=graphene.String(default_value="osfeatures:BoundaryLine_PollingDistrict"),
       propertyName=graphene.String(default_value=""),
       literal=graphene.String(default_value="")
       )
 
-  def resolve_hello(self, info, count, typeNames, propertyName, literal):
-    return fetchFeaturesFromWFS(count, typeNames, propertyName, literal)
+    def resolve_hello(self, info, count, typeNames, propertyName, literal):
+        return fetchFeaturesFromWFS(count, typeNames, propertyName, literal)
+
+    # typeNames = graphene.String(default_value="osfeatures:BoundaryLine_PollingDistrict")
+    # def resolve_typeNames(self, info):
+    #     return 'Yes I am a type name!'
 
 """HTTP Cloud Function.
 Args:
@@ -60,7 +65,10 @@ def graphqlwfs(request):
 
     schema = graphene.Schema(query=Query)
     result = schema.execute(graphQlQuery)
+    # result = schema.execute(graphQlQuery, context_value={"typeNames":"osfeatures:BoundaryLine_PollingDistrict"})
 
     #  TODO: error handling
+    if result.errors :
+        return "Check your query"
 
-    return result.data
+    return str(result.data.items())
