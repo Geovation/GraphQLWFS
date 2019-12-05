@@ -46,30 +46,47 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
 # }
 # TODO: Next step is to convert this in a proper query.
 class Query(graphene.ObjectType):
-  hello = graphene.String(
-      count=graphene.Int(default_value=10),
-      typeNames=graphene.String(default_value="osfeatures:BoundaryLine_PollingDistrict"), 
-      propertyName=graphene.String(default_value=""), 
-      literal=graphene.String(default_value="")
-  )   
-  boundaryLinePollingDistrict = graphene.String( 
-      first=graphene.Int(default_value=10),
-      ward=graphene.String(default_value="Bottisham Ward"),
-      parish=graphene.String(default_value="Brinkley CP")
-  )
-  def resolve_hello(self, info, count, typeNames, propertyName, literal):
-    #    TODO
-    filters = {
-    }
-    filters[propertyName] = literal
-    return fetchFeaturesFromWFS(count, typeNames, filters)
+    hello = graphene.String(
+        count=graphene.Int(default_value=10),
+        typeNames=graphene.String(default_value="osfeatures:BoundaryLine_PollingDistrict"), 
+        propertyName=graphene.String(default_value=""), 
+        literal=graphene.String(default_value="")
+    )   
+    boundaryLinePollingDistrict = graphene.String( 
+        first=graphene.Int(default_value=10),
+        ward=graphene.String(default_value="Bottisham Ward"),
+        parish=graphene.String(default_value="Brinkley CP")
+    )
 
-  def resolve_boundaryLinePollingDistrict(self, info, first, ward, parish):
-    filters = {
-        "ward": ward,
-        "parish": parish
-    }  
-    return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:BoundaryLine_PollingDistrict", filters=filters) 
+    #   { 
+    #      hello(
+    #         count: 5, 
+    #         propertyName: "Ward", 
+    #         literal: "Bottisham Ward",
+    #         typeNames: "osfeatures:BoundaryLine_PollingDistrict"
+    #     ) 
+    # }
+    def resolve_hello(self, info, count, typeNames, propertyName, literal):
+        filters = {}
+        filters[propertyName] = literal
+        return fetchFeaturesFromWFS(count, typeNames, filters)
+
+    # { 
+    #      boundaryLinePollingDistrict(
+    #         first: 5, 
+    #         ward: "Bottisham Ward",
+    #         parish: "Burrough Green CP"
+    #     ) 
+    # }
+
+    def resolve_boundaryLinePollingDistrict(self, info, first, ward, parish):
+        filters = {
+            "ward": ward,
+            "parish": parish
+        }  
+        return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:BoundaryLine_PollingDistrict", filters=filters) 
+
+
 """HTTP Cloud Function.
 Args:
     request (flask.Request): The request object.
@@ -82,17 +99,6 @@ Returns:
 def graphqlwfs(request):
     graphQlQuery = request.data.decode('utf-8')
     schema = graphene.Schema(query=Query)
-
-    graphQlQuery = '''
-    { 
-         hello(
-            count: 5, 
-            propertyName: "Ward", 
-            literal: "Bottisham Ward",
-            typeNames: "osfeatures:BoundaryLine_PollingDistrict"
-        ) 
-    }
-    '''
 
     result = schema.execute(graphQlQuery)
     #  TODO: error handling
