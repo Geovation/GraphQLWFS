@@ -77,13 +77,13 @@ class Query(graphene.ObjectType):
         return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:BoundaryLine_PollingDistrict", filters=filters)
 
     # AYMAR resolve function for selected field
-    # def resolve_highways_RoadLink(self, info, first, alternateIdentifierScheme, directionality, formOfWay):
-    #     filters = {
-    #         "alternateIdentifierScheme": alternateIdentifierScheme,
-    #         "directionality": directionality,
-    #         "formOfWay": formOfWay
-    #     }
-    #     return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:highways_RoadLink", filters=filters)
+    def resolve_highways_RoadLink(self, info, first, alternateIdentifierScheme, directionality, formOfWay):
+        filters = {
+            "alternateIdentifierScheme": alternateIdentifierScheme,
+            "directionality": directionality,
+            "formOfWay": formOfWay
+        }
+        return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:highways_RoadLink", filters=filters)
 
 """HTTP Cloud Function.
 Args:
