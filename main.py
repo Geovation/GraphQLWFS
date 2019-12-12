@@ -8,12 +8,8 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
         'typeNames': typeNames,
         'count': count
     }
-    # TODO: generate <Filter> from filters
-
-
 
     propertyIsEqualTo = ""
-
     for propertyName, literal in filters.items():
         propertyIsEqualTo += """
             <PropertyIsEqualTo>
@@ -24,9 +20,8 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
 
     if propertyIsEqualTo != "":
         filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
-
-
         payload["filter"] = filter
+
     response = requests.get(wfsApiBaseUrl, params=payload)
     if response.status_code != 200:
         payloader = print(">>>>>>>>>>>>>>>> payload", payload)
@@ -37,13 +32,6 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
         return "Error: Check your logs" 
     return response.json()['features']
 # Getting started with GraphQL. In this way we can extract data from the query. 
-# {
-#     boundaryLinePollingDistrict (
-#         first: 5
-#         ward: "Bottisham Ward",
-#         parish: "Brinkley CP"  
-#     )
-# }
 # TODO: Next step is to convert this in a proper query.
 class Query(graphene.ObjectType):
     hello = graphene.String(
@@ -56,6 +44,10 @@ class Query(graphene.ObjectType):
         first=graphene.Int(default_value=10),
         ward=graphene.String(default_value="Bottisham Ward"),
         parish=graphene.String(default_value="Brinkley CP")
+    )
+    zoomstackNames = graphene.String( 
+        first=graphene.Int(default_value=10),
+        Name1=graphene.String(default_value="BRECON BEACONS NATIONAL PARK")
     )
 
     #   { 
@@ -86,6 +78,17 @@ class Query(graphene.ObjectType):
         }  
         return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:BoundaryLine_PollingDistrict", filters=filters) 
 
+    #  {
+    #      zoomstackNames(
+    #          first: 5,
+    #          Type: "National Park"
+    #      )
+    #  }
+    def resolve_zoomstackNames(self, info, first, Name1):
+        filters = {
+            "Name1": Name1
+        }  
+        return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_Names", filters=filters) 
 
 """HTTP Cloud Function.
 Args:
@@ -99,7 +102,7 @@ Returns:
 def graphqlwfs(request):
     graphQlQuery = request.data.decode('utf-8')
     schema = graphene.Schema(query=Query)
-
     result = schema.execute(graphQlQuery)
+
     #  TODO: error handling
     return result.data
