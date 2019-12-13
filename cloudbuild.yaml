@@ -4,5 +4,13 @@ secrets:
     OS_KEY: CiQAOoKuDKDA4YRlHzmUBSGnh7QSH9YY6ibXjwAUcV53f9ofcF8SSQC7QXhlnA3gjaTsmZBhgCF1tMK2DL41woJOwWOqKMbbrShtjodV6bZ+F402FZGw5+D/SKaqDlNgQkK3/s0wWpXnD3IJQOeuYIA=
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['functions', 'deploy', 'graphqlwfs', '--runtime', 'python37', '--trigger-http']
   secretEnv: ['OS_KEY']
+  args:
+  - 'functions'
+  - 'deploy'
+  - 'graphqlwfs'
+  - '--runtime'
+  - 'python37'
+  - '--trigger-http'
+  - '--set-env-vars'
+  - 'OS_KEY=$$OS_KEY'
