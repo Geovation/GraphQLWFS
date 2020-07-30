@@ -1,7 +1,8 @@
-#pip
+pip
 google-cloud-storage
 xmltodict
 pytest
 flask
 requests
 graphene
+python-dotenv
