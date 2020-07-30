@@ -19,8 +19,8 @@ echo -n $OS_KEY | gcloud kms encrypt \
 
 To run in locally
 ```
-export OS_KEY=1234567890
-./local.sh
+echo OS_KEY=1234567890 > .env 
+docker-compose up
 ```
 
 Example:
