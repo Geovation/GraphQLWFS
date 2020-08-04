@@ -36,7 +36,7 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
 class Query(graphene.ObjectType):
     hello = graphene.String(
         count=graphene.Int(default_value=10),
-        typeNames=graphene.String(default_value="osfeatures:BoundaryLine_PollingDistrict"),
+        typeNames=graphene.String(default_value="osfeatures:Zoomstack_Airports"),
         propertyName=graphene.String(default_value=""),
         literal=graphene.String(default_value="")
     )
