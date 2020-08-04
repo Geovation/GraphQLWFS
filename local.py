@@ -5,8 +5,7 @@ from main import graphqlwfs
 app = Flask(__name__)
 @app.route('/', methods = ['POST', 'GET'])
 def local():
-    # return graphqlwfs(request)
-    return "Yes Yes"
+    return graphqlwfs(request)
 
 if __name__ == '__main__':
     app.run(debug=True)

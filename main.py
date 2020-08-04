@@ -105,4 +105,6 @@ def graphqlwfs(request):
     result = schema.execute(graphQlQuery)
 
     #  TODO: error handling
+    if result.data == None:
+        return "Oh No No"
     return str(result.data)
