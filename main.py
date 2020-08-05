@@ -100,11 +100,19 @@ Returns:
     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
 """
 def graphqlwfs(request):
-    graphQlQuery = request.data.decode('utf-8')
+    # graphQlQuery = request.data.decode('utf-8')
+    graphQlQuery = """{
+        hello(
+            count: 5,
+            propertyName: "Name",
+            literal: "Sumburgh Airport",
+            typeNames: "osfeatures:Zoomstack_Airports"
+        )
+    }"""
     schema = graphene.Schema(query=Query)
     result = schema.execute(graphQlQuery)
 
     #  TODO: error handling
     if result.data == None:
-        return "Oh No No"
-    return str(result.data)
+        return "Your query did not execute"
+    return result.data['hello']
