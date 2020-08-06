@@ -1,6 +1,7 @@
 import requests
 import os
 import graphene
+import json
 def fetchFeaturesFromWFS(count, typeNames, filters):
     OS_KEY = os.getenv('OS_KEY', '????????')
     wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
@@ -115,4 +116,6 @@ def graphqlwfs(request):
     #  TODO: error handling
     if result.data == None:
         return "Your query did not execute"
-    return result.data['hello']
+    result_string = result.data['hello']
+    # return result_object
+    return result_string
