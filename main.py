@@ -19,8 +19,21 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
             </PropertyIsEqualTo>
         """.format(propertyName, literal)
 
+    propertyIsLessThan = ""
+    for propertyName, literal in filters.items():
+        propertyIsLessThan += """
+            <propertyIsLessThan>
+                <PropertyName>{0}</PropertyName>
+                <Literal>{1}</Literal>
+            </propertyIsLessThan>
+        """.format(propertyName, literal)
+
     if propertyIsEqualTo != "":
         filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
+        payload["filter"] = filter
+
+    if propertyIsLessThan != "":
+        filter = "<Filter>" + propertyIsLessThan + "</Filter>"
         payload["filter"] = filter
 
     response = requests.get(wfsApiBaseUrl, params=payload)
@@ -117,5 +130,12 @@ def graphqlwfs(request):
     if result.data == None:
         return "Your query did not execute"
     result_string = result.data['hello']
+    # result_string = result.data
     # return result_object
+    # res = ''
+    # for key, value in result_string:
+    #     if key == "geometry":
+    #         res = value
+    # y = json.loads(result_string)
+    # return y["hello"]
     return result_string
