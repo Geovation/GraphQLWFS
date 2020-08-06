@@ -54,11 +54,7 @@ class Query(graphene.ObjectType):
         propertyName=graphene.String(default_value=""),
         literal=graphene.String(default_value="")
     )
-    boundaryLinePollingDistrict = graphene.String(
-        first=graphene.Int(default_value=10),
-        ward=graphene.String(default_value="Bottisham Ward"),
-        parish=graphene.String(default_value="Brinkley CP")
-    )
+
     zoomstackNames = graphene.String(
         first=graphene.Int(default_value=10),
         Name1=graphene.String(default_value="BRECON BEACONS NATIONAL PARK")
@@ -76,21 +72,6 @@ class Query(graphene.ObjectType):
         filters = {}
         filters[propertyName] = literal
         return fetchFeaturesFromWFS(count, typeNames, filters)
-
-    # {
-    #      boundaryLinePollingDistrict(
-    #         first: 5,
-    #         ward: "Bottisham Ward",
-    #         parish: "Burrough Green CP"
-    #     )
-    # }
-
-    def resolve_boundaryLinePollingDistrict(self, info, first, ward, parish):
-        filters = {
-            "ward": ward,
-            "parish": parish
-        }
-        return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:BoundaryLine_PollingDistrict", filters=filters)
 
      # {
      #     zoomstackNames(
