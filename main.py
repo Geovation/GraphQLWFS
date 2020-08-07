@@ -60,6 +60,13 @@ class Query(graphene.ObjectType):
         Name1=graphene.String(default_value="BRECON BEACONS NATIONAL PARK")
     )
 
+    zoomstackUrbanAreas = graphene.String(
+        first=graphene.Int(default_value=10),
+        typeNames=graphene.String(default_value="osfeatures:Zoomstack_UrbanAreas"),
+        propertyName=graphene.String(default_value=""),
+        literal=graphene.Float(default_value=0.0)
+    )
+
     #   {
     #      hello(
     #         count: 5,
@@ -85,6 +92,11 @@ class Query(graphene.ObjectType):
         }
         return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_Names", filters=filters)
 
+    def resolve_zoomstackUrbanAreas(self, info, first, typeNames, propertyName, literal):
+        filters = {}
+        filters[propertyName] = literal
+        return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_UrbanAreas", filters=filters)
+
 """HTTP Cloud Function.
 Args:
     request (flask.Request): The request object.
@@ -96,12 +108,21 @@ Returns:
 """
 def graphqlwfs(request):
     # graphQlQuery = request.data.decode('utf-8')
+    # graphQlQuery = """{
+    #     hello(
+    #         count: 50,
+    #         propertyName: "NAME",
+    #         literal: "Sumburgh Airport",
+    #         typeNames: "osfeatures:Zoomstack_Airports"
+    #     )
+    # }"""
+
     graphQlQuery = """{
-        hello(
-            count: 5,
-            propertyName: "Name",
-            literal: "Sumburgh Airport",
-            typeNames: "osfeatures:Zoomstack_Airports"
+        zoomstackUrbanAreas(
+            first: 5,
+            propertyName: "SHAPE_length",
+            literal: 1200.0,
+            typeNames: "osfeatures:Zoomstack_UrbanAreas"
         )
     }"""
     schema = graphene.Schema(query=Query)
@@ -110,8 +131,8 @@ def graphqlwfs(request):
     #  TODO: error handling
     if result.data == None:
         return "Your query did not execute"
-    result_string = result.data['hello']
-    # result_string = result.data
+    # result_string = result.data['hello']
+    result_string = result.data
     # return result_object
     # res = ''
     # for key, value in result_string:
