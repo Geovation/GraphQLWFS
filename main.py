@@ -19,22 +19,22 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
             </PropertyIsEqualTo>
         """.format(propertyName, literal)
 
-    propertyIsLessThan = ""
-    for propertyName, literal in filters.items():
-        propertyIsLessThan += """
-            <propertyIsLessThan>
-                <PropertyName>{0}</PropertyName>
-                <Literal>{1}</Literal>
-            </propertyIsLessThan>
-        """.format(propertyName, literal)
+    # propertyIsLessThan = ""
+    # for propertyName, literal in filters.items():
+    #     propertyIsLessThan += """
+    #         <propertyIsLessThan>
+    #             <PropertyName>{0}</PropertyName>
+    #             <Literal>{1}</Literal>
+    #         </propertyIsLessThan>
+    #     """.format(propertyName, literal)
 
     if propertyIsEqualTo != "":
         filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
         payload["filter"] = filter
 
-    if propertyIsLessThan != "":
-        filter = "<Filter>" + propertyIsLessThan + "</Filter>"
-        payload["filter"] = filter
+    # if propertyIsLessThan != "":
+    #     filter = "<Filter>" + propertyIsLessThan + "</Filter>"
+    #     payload["filter"] = filter
 
     response = requests.get(wfsApiBaseUrl, params=payload)
     if response.status_code != 200:
@@ -60,11 +60,11 @@ class Query(graphene.ObjectType):
         Name1=graphene.String(default_value="BRECON BEACONS NATIONAL PARK")
     )
 
-    zoomstackUrbanAreas = graphene.String(
+    ZoomstackSites = graphene.String(
         first=graphene.Int(default_value=10),
-        typeNames=graphene.String(default_value="osfeatures:Zoomstack_UrbanAreas"),
+        typeNames=graphene.String(default_value="osfeatures:Zoomstack_Sites"),
         propertyName=graphene.String(default_value=""),
-        literal=graphene.Float(default_value=0.0)
+        literal=graphene.String(default_value="")
     )
 
     #   {
@@ -92,10 +92,10 @@ class Query(graphene.ObjectType):
         }
         return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_Names", filters=filters)
 
-    def resolve_zoomstackUrbanAreas(self, info, first, typeNames, propertyName, literal):
+    def resolve_ZoomstackSites(self, info, first, typeNames, propertyName, literal):
         filters = {}
         filters[propertyName] = literal
-        return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_UrbanAreas", filters=filters)
+        return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_Sites", filters=filters)
 
 """HTTP Cloud Function.
 Args:
@@ -118,11 +118,11 @@ def graphqlwfs(request):
     # }"""
 
     graphQlQuery = """{
-        zoomstackUrbanAreas(
-            first: 5,
-            propertyName: "SHAPE_length",
-            literal: 1200.0,
-            typeNames: "osfeatures:Zoomstack_UrbanAreas"
+        ZoomstackSites(
+            first: 8,
+            typeNames: "osfeatures:Zoomstack_Sites",
+            propertyName: "Type",
+            literal: "Air Transport"
         )
     }"""
     schema = graphene.Schema(query=Query)
@@ -140,4 +140,4 @@ def graphqlwfs(request):
     #         res = value
     # y = json.loads(result_string)
     # return y["hello"]
-    return result_string
+    return result.data
