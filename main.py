@@ -44,7 +44,7 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
         headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
         statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
         return "Error: Check your logs"
-    return response.json()['features']
+    return response.json()['features'][0]['properties']
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
 class Query(graphene.ObjectType):
