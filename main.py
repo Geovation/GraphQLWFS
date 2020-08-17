@@ -10,31 +10,31 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
         'count': count
     }
 
-    propertyIsEqualTo = ""
-    for propertyName, literal in filters.items():
-        propertyIsEqualTo += """
-            <PropertyIsEqualTo>
-                <PropertyName>{0}</PropertyName>
-                <Literal>{1}</Literal>
-            </PropertyIsEqualTo>
-        """.format(propertyName, literal)
-
-    # propertyIsLessThan = ""
+    # propertyIsEqualTo = ""
     # for propertyName, literal in filters.items():
-    #     propertyIsLessThan += """
-    #         <propertyIsLessThan>
+    #     propertyIsEqualTo += """
+    #         <PropertyIsEqualTo>
     #             <PropertyName>{0}</PropertyName>
     #             <Literal>{1}</Literal>
-    #         </propertyIsLessThan>
+    #         </PropertyIsEqualTo>
     #     """.format(propertyName, literal)
 
-    if propertyIsEqualTo != "":
-        filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
-        payload["filter"] = filter
+    PropertyIsLessThanOrEqualTo = ""
+    for propertyName, literal in filters.items():
+        PropertyIsLessThanOrEqualTo += """
+            <PropertyIsLessThanOrEqualTo>
+                <PropertyName>{0}</PropertyName>
+                <Literal>{1}</Literal>
+            </PropertyIsLessThanOrEqualTo>
+        """.format(propertyName, literal)
 
-    # if propertyIsLessThan != "":
-    #     filter = "<Filter>" + propertyIsLessThan + "</Filter>"
+    # if propertyIsEqualTo != "":
+    #     filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
     #     payload["filter"] = filter
+
+    if PropertyIsLessThanOrEqualTo != "":
+        filter = "<Filter>" + PropertyIsLessThanOrEqualTo + "</Filter>"
+        payload["filter"] = filter
 
     response = requests.get(wfsApiBaseUrl, params=payload)
     if response.status_code != 200:
@@ -44,7 +44,7 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
         headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
         statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
         return "Error: Check your logs"
-    return response.json()['features'][0]['properties']
+    return response.json()['features'][0]
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
 class Query(graphene.ObjectType):
@@ -64,7 +64,7 @@ class Query(graphene.ObjectType):
         first=graphene.Int(default_value=10),
         typeNames=graphene.String(default_value="osfeatures:Zoomstack_Sites"),
         propertyName=graphene.String(default_value=""),
-        literal=graphene.String(default_value="")
+        literal=graphene.Int(default_value=0)
     )
 
     #   {
@@ -121,8 +121,8 @@ def graphqlwfs(request):
         ZoomstackSites(
             first: 8,
             typeNames: "osfeatures:Zoomstack_Sites",
-            propertyName: "Type",
-            literal: "Air Transport"
+            propertyName: "SHAPE_Area",
+            literal: 2463
         )
     }"""
     schema = graphene.Schema(query=Query)
