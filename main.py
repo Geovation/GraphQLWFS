@@ -10,15 +10,17 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
         'count': count
     }
 
-    # propertyIsEqualTo = ""
-    # for propertyName, literal in filters.items():
-    #     propertyIsEqualTo += """
-    #         <PropertyIsEqualTo>
-    #             <PropertyName>{0}</PropertyName>
-    #             <Literal>{1}</Literal>
-    #         </PropertyIsEqualTo>
-    #     """.format(propertyName, literal)
+    #wfs filter query for the PropertyIsEqualTo operator
+    propertyIsEqualTo = ""
+    for propertyName, literal in filters.items():
+        propertyIsEqualTo += """
+            <PropertyIsEqualTo>
+                <PropertyName>{0}</PropertyName>
+                <Literal>{1}</Literal>
+            </PropertyIsEqualTo>
+        """.format(propertyName, literal)
 
+    #wfs filter query for the PropertyIsLessThanOrEqualTo operator
     PropertyIsLessThanOrEqualTo = ""
     for propertyName, literal in filters.items():
         PropertyIsLessThanOrEqualTo += """
@@ -28,10 +30,12 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
             </PropertyIsLessThanOrEqualTo>
         """.format(propertyName, literal)
 
-    # if propertyIsEqualTo != "":
-    #     filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
-    #     payload["filter"] = filter
+    #Adds filter to payload array of url parameters
+    if propertyIsEqualTo != "":
+        filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
+        # payload["filter"] = filter
 
+    #Adds another filter to payload array of url parameters
     if PropertyIsLessThanOrEqualTo != "":
         filter = "<Filter>" + PropertyIsLessThanOrEqualTo + "</Filter>"
         payload["filter"] = filter
@@ -44,22 +48,26 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
         headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
         statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
         return "Error: Check your logs"
-    return response.json()['features'][0]
+    return response.json()['features']
+
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
 class Query(graphene.ObjectType):
-    hello = graphene.String(
+    #Field definition for Zoomstack_Airports feature
+    ZoomstackAirports = graphene.String(
         count=graphene.Int(default_value=10),
         typeNames=graphene.String(default_value="osfeatures:Zoomstack_Airports"),
         propertyName=graphene.String(default_value=""),
         literal=graphene.String(default_value="")
     )
 
+    #Field definition for zoomstack_Names feature
     zoomstackNames = graphene.String(
         first=graphene.Int(default_value=10),
         Name1=graphene.String(default_value="BRECON BEACONS NATIONAL PARK")
     )
 
+    #Field definition for Zoomstack_Sites feature
     ZoomstackSites = graphene.String(
         first=graphene.Int(default_value=10),
         typeNames=graphene.String(default_value="osfeatures:Zoomstack_Sites"),
@@ -67,31 +75,20 @@ class Query(graphene.ObjectType):
         literal=graphene.Int(default_value=0)
     )
 
-    #   {
-    #      hello(
-    #         count: 5,
-    #         propertyName: "Ward",
-    #         literal: "Bottisham Ward",
-    #         typeNames: "osfeatures:BoundaryLine_PollingDistrict"
-    #     )
-    # }
-    def resolve_hello(self, info, count, typeNames, propertyName, literal):
+    #Resolver function for the field type ZoomstackAirports
+    def resolve_ZoomstackAirports(self, info, count, typeNames, propertyName, literal):
         filters = {}
         filters[propertyName] = literal
         return fetchFeaturesFromWFS(count, typeNames, filters)
 
-     # {
-     #     zoomstackNames(
-     #         first: 5,
-     #         Type: "National Park"
-     #     )
-     # }
+    #Resolver function for the field type zoomstackNames
     def resolve_zoomstackNames(self, info, first, Name1):
         filters = {
             "Name1": Name1
         }
         return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_Names", filters=filters)
 
+    #Resolver function for the field type ZoomstackSites
     def resolve_ZoomstackSites(self, info, first, typeNames, propertyName, literal):
         filters = {}
         filters[propertyName] = literal
@@ -108,15 +105,18 @@ Returns:
 """
 def graphqlwfs(request):
     # graphQlQuery = request.data.decode('utf-8')
-    # graphQlQuery = """{
-    #     hello(
-    #         count: 50,
-    #         propertyName: "NAME",
-    #         literal: "Sumburgh Airport",
-    #         typeNames: "osfeatures:Zoomstack_Airports"
-    #     )
-    # }"""
 
+    #GraphQL query example 1
+    graphQlQuery1 = """{
+        ZoomstackAirports(
+            count: 50,
+            propertyName: "NAME",
+            literal: "Sumburgh Airport",
+            typeNames: "osfeatures:Zoomstack_Airports"
+        )
+    }"""
+
+    #GraphQL query example 2
     graphQlQuery = """{
         ZoomstackSites(
             first: 8,
@@ -131,13 +131,4 @@ def graphqlwfs(request):
     #  TODO: error handling
     if result.errors != None:
         return "Your query did not execute"
-    # result_string = result.data['hello']
-    result_string = result.data
-    # return result_object
-    # res = ''
-    # for key, value in result_string:
-    #     if key == "geometry":
-    #         res = value
-    # y = json.loads(result_string)
-    # return y["hello"]
     return result.data
