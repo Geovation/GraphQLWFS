@@ -1,4 +1,4 @@
-from flask import Flask, request, json
+from flask import Flask, request
 from main import graphqlwfs
 
 # the following code is tu run it locally. Just run "local.sh"
