@@ -3,7 +3,8 @@ import os
 import graphene
 def fetchFeaturesFromWFS(count, typeNames, filters):
     OS_KEY = os.getenv('OS_KEY', '????????')
-    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
+    #Edit WFS API Endpoint address here
+    wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
     payload = {
         'typeNames': typeNames,
         'count': count
@@ -34,9 +35,10 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
 # Getting started with GraphQL. In this way we can extract data from the query. 
 # TODO: Next step is to convert this in a proper query.
 class Query(graphene.ObjectType):
+    #Update hello field with valid typenames Zoomstack_Sites
     hello = graphene.String(
         count=graphene.Int(default_value=10),
-        typeNames=graphene.String(default_value="osfeatures:BoundaryLine_PollingDistrict"), 
+        typeNames=graphene.String(default_value="osfeatures:Zoomstack_Sites"), 
         propertyName=graphene.String(default_value=""), 
         literal=graphene.String(default_value="")
     )   
