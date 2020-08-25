@@ -113,7 +113,6 @@ Returns:
 
 def graphqlwfs(request):
     graphQlQuery = request.data.decode('utf-8')
-
     schema = graphene.Schema(query=Query)
     result = schema.execute(graphQlQuery)
 
