@@ -25,19 +25,6 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
     if propertyIsEqualTo != "":
         filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
         payload["filter"] = filter
-        
-    propertyIsLessThan = ""
-    for propertyName, literal in filters.items():
-        propertyIsLessThan += """
-            <PropertyIsLessThan >
-                <PropertyName>{0}</PropertyName>
-                <Literal>{1}</Literal>
-            </PropertyIsLessThan >
-        """.format(propertyName, literal)
-
-    if propertyIsLessThan != "":
-        filter = "<Filter>" + propertyIsLessThan + "</Filter>"
-        payload["filter"] = filter
 
     response = requests.get(wfsApiBaseUrl, params=payload)
     if response.status_code != 200:
