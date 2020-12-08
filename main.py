@@ -4,11 +4,10 @@ import graphene
 
 
 def fetchFeaturesFromWFS(count, typeNames, filters):
-    OS_KEY = os.getenv('OS_KEY', '???????')
-    # Edit WFS API Endpoint address here
+    OS_KEY = os.getenv('OS_KEY', '????????')
+    #Edit WFS API Endpoint address here
     wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(
         OS_KEY)
-
     payload = {
         'typeNames': typeNames,
         'count': count
@@ -111,12 +110,11 @@ Returns:
     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
 """
 
+
 def graphqlwfs(request):
     graphQlQuery = request.data.decode('utf-8')
     schema = graphene.Schema(query=Query)
     result = schema.execute(graphQlQuery)
-    
-    return result.data
 
     #  TODO: error handling
-    
+    return result.data
