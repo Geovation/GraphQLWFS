@@ -10,12 +10,5 @@ steps:
   secretEnv: ['OS_KEY']
   args: ['-c', 'echo "OS_KEY: $$OS_KEY" > vars.yaml']
 
-# TODO: add test
-# TODO test for pull request
-
-# see https://cloud.google.com/functions/docs/testing/test-cicd#functions-prepare-environment-python
-# - name: 'gcr.io/cloud-builders/gcloud'
-#   args: ['functions', 'deploy', 'graphqlwfs', '--runtime', 'python37', '--trigger-http', '--env-vars-file', 'vars.yaml']
-
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['functions', 'deploy', 'graphqlwfs', '--runtime', 'python37', '--trigger-http', '--env-vars-file', 'vars.yaml']
