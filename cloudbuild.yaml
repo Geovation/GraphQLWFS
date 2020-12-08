@@ -1,7 +1,7 @@
 secrets:
-- kmsKeyName: projects/gcp-training-144309/locations/global/keyRings/graphQL/cryptoKeys/live
+- kmsKeyName: projects/graphql-wfs/locations/global/keyRings/graphQL/cryptoKeys/live
   secretEnv:
-    OS_KEY: CiQAOoKuDKDA4YRlHzmUBSGnh7QSH9YY6ibXjwAUcV53f9ofcF8SSQC7QXhlnA3gjaTsmZBhgCF1tMK2DL41woJOwWOqKMbbrShtjodV6bZ+F402FZGw5+D/SKaqDlNgQkK3/s0wWpXnD3IJQOeuYIA=
+    OS_KEY: CiQAtMyr98Tf5x+g+EDmhI+5BatnfBd+N0gdEH8hUeNDsJOrFV4SSQBqW3q98p2ErGNiabk1MbrBTWkgwkhCudYVfSnVPvSwxH45Kyqzx28hGnTdsImqClW29QNaxIvX1nECUbGxFdWccJ81UGhEQwg=
 
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
