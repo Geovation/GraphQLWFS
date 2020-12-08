@@ -112,11 +112,8 @@ Returns:
 """
 
 def graphqlwfs(request, devMode=False):
-    print(request, flush=True)
     graphQlQuery = request.data.decode('utf-8')
-    print(graphQlQuery, flush=True)
     schema = graphene.Schema(query=Query)
-    print(schema, flush=True)
     
     if devMode:
         print("devMode = True")
