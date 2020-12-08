@@ -17,6 +17,11 @@ echo -n $OS_KEY | gcloud kms encrypt \
   --key=projects/gcp-training-144309/locations/global/keyRings/graphQL/cryptoKeys/live | base64
 ```
 
+To run automatic test type the following code in cmd/powershell
+```
+python test.py
+```
+
 To run in locally
 ```
 echo OS_KEY=1234567890 > .env 
