@@ -6,6 +6,7 @@ from graphene.test import Client
 
 class TestStringMethods(unittest.TestCase):
 
+    # Test hello query
     def test_hello(self):
   
         schema = graphene.Schema(query=Query)
