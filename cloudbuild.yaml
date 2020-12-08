@@ -10,7 +10,6 @@ steps:
   secretEnv: ['OS_KEY']
   args: ['-c', 'echo "OS_KEY: $$OS_KEY" > vars.yaml']
 
-
 # TODO: add test
 # TODO test for pull request
 
