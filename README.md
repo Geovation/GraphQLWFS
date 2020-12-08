@@ -3,18 +3,19 @@ A query middleware for quering WFS services
 
 A prototype that will use GraphQL as a middletier to query WFS services.
 
-live demo: https://us-central1-gcp-training-144309.cloudfunctions.net/graphqlwfs
+live demo: https://us-central1-graphql-wfs.cloudfunctions.net/graphqlwfs
 
 encrypt variable with
 
 ```
 export OS_KEY=1234567890
+export PROJECT=graphql-wfs
 echo -n $OS_KEY | gcloud kms encrypt \
   --plaintext-file=- \  # - reads from stdin
   --ciphertext-file=- \  # - writes to stdout
   --location=global \
-  --keyring=projects/gcp-training-144309/locations/global/keyRings/graphQL \
-  --key=projects/gcp-training-144309/locations/global/keyRings/graphQL/cryptoKeys/live | base64
+  --keyring=projects/$PROJECT/locations/global/keyRings/graphQL \
+  --key=projects/$PROJECT/locations/global/keyRings/graphQL/cryptoKeys/live | base64
 ```
 
 To run in locally (without GCP tools)
