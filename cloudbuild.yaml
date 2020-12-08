@@ -18,16 +18,5 @@ steps:
 # - name: 'gcr.io/cloud-builders/gcloud'
 #   args: ['functions', 'deploy', 'graphqlwfs', '--runtime', 'python37', '--trigger-http', '--env-vars-file', 'vars.yaml']
 
-# - name: 'gcr.io/cloud-builders/gcloud'
-#   args: ['functions', 'deploy', 'graphqlwfs', '--runtime', 'python37', '--trigger-http', '--env-vars-file', 'vars.yaml']
-
 - name: 'gcr.io/cloud-builders/gcloud'
-  args:
-  - 'functions'
-  - 'deploy'
-  - 'graphqlwfs'
-  - '--runtime'
-  - 'python37'
-  - '--trigger-http'
-  - '--env-vars-file'
-  - 'vars.yaml'
+  args: ['functions', 'deploy', 'graphqlwfs', '--runtime', 'python37', '--trigger-http', '--env-vars-file', 'vars.yaml']
