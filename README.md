@@ -17,6 +17,12 @@ echo -n $OS_KEY | gcloud kms encrypt \
   --key=projects/gcp-training-144309/locations/global/keyRings/graphQL/cryptoKeys/live | base64
 ```
 
+To run test.py
+Type the following command in the command prompt
+```
+python test.py
+```
+
 To run in locally (without GCP tools)
 ```
 echo OS_KEY=1234567890 > .env 
