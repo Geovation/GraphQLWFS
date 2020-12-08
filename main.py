@@ -4,7 +4,6 @@ import graphene
 
 
 def fetchFeaturesFromWFS(count, typeNames, filters):
-    # Defaults to given key value if OS_KEY cannot be accepted from environment variable.
     OS_KEY = os.getenv('OS_KEY', '???????')
     # Edit WFS API Endpoint address here
     wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(
