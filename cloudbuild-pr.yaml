@@ -10,10 +10,12 @@ steps:
   secretEnv: ['OS_KEY']
   args: ['-c', 'echo "OS_KEY: $$OS_KEY" > vars.yaml']
 
-- name: python:3.7
-  args: ["python","-m","pip","install", "-r", "requirements.txt"]
+- name: python
+  entrypoint: python
+  args: ["-m","pip","install", "-r", "requirements.txt", "--user"]
   id: install requirements
 
-- name: python:3.7
-  args: ["python","-m","unittest","discover","--verbose","-s",".","-p","*_test.py"]
+- name: python
+  entrypoint: python
+  args: ["-m","unittest","discover","--verbose","-s",".","-p","*_test.py"]
   id: unittest
