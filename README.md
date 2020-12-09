@@ -36,7 +36,7 @@ export OS_KEY=1234567890
 source venv/bin/activate
 python -m pip install -r requirements.txt
 python main_test.py # it runs the tests
-python main.py # it runs a local server
+python local.py # it runs a local server
 ```
 
 Example:
