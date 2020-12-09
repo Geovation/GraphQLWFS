@@ -30,7 +30,7 @@ python3 -m venv venv
 export OS_KEY=1234567890
 source venv/bin/activate
 python -m pip install -r requirements.txt
-python -m unittest discover --verbose -s . -p *_test.py # it runs the tests
+python main_test.py # it runs the tests
 python local.py # it runs a local server
 ```
 
