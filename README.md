@@ -11,8 +11,8 @@ encrypt variable with
 export OS_KEY=1234567890
 export PROJECT=graphql-wfs
 echo -n $OS_KEY | gcloud kms encrypt \
-  --plaintext-file=- \  # - reads from stdin
-  --ciphertext-file=- \  # - writes to stdout
+  --plaintext-file=- \
+  --ciphertext-file=- \
   --location=global \
   --keyring=projects/$PROJECT/locations/global/keyRings/graphQL \
   --key=projects/$PROJECT/locations/global/keyRings/graphQL/cryptoKeys/live | base64
@@ -30,8 +30,8 @@ python3 -m venv venv
 export OS_KEY=1234567890
 source venv/bin/activate
 python -m pip install -r requirements.txt
-python main_test.py # it runs the tests
-python main.py # it runs a local server
+python -m unittest discover --verbose -s . -p *_test.py # it runs the tests
+python local.py # it runs a local server
 ```
 
 Example:

@@ -1,5 +1,9 @@
 import unittest
 
+# Need this two lines to read .env
+from dotenv import load_dotenv
+load_dotenv()
+
 class TestTest(unittest.TestCase):
 
   def test_upper(self):
