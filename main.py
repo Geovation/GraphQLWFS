@@ -42,7 +42,7 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
 
 class Query(graphene.ObjectType):
     #Update hello field with valid typenames Zoomstack_Sites
-    hello = graphene.String(
+    hello = graphene.List(graphene.String,
         count=graphene.Int(default_value=10),
         typeNames=graphene.String(default_value="osfeatures:Zoomstack_Sites"),
         propertyName=graphene.String(default_value=""),

@@ -17,4 +17,4 @@ steps:
     - |
       cat .env
       pip install -r requirements.txt
-      python -m unittest discover --verbose -s . -p *_test.py
+      python -m unittest  --verbose 
