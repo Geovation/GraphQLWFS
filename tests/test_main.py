@@ -1,9 +1,6 @@
 import unittest
-import graphene
-from six import assertCountEqual
-from main import graphqlwfs, Query
-from graphene.test import Client
-from unittest.mock import Mock, patch
+from main import graphqlwfs, fetchFeaturesFromWFS
+from unittest.mock import patch
 
 class HelloTestCase(unittest.TestCase):
     # def make_mocked_request_get(data):
@@ -14,6 +11,8 @@ class HelloTestCase(unittest.TestCase):
     #         return mockResponse()
     #     return mocked_request_get
 
+    
+    # testing main
     def make_mocked_response(self,data):
         class mockResponse:
             status_code = 200
@@ -53,6 +52,10 @@ class HelloTestCase(unittest.TestCase):
 
         self.assertEqual(result, expected_value)
 
+    # TODO: fetchFeaturesFromWFS is building a query based on the inputs. In order to test only the part that builds the WFS query,
+    # you need to:
+    # 1) extract it (call it "buildWFSQuery")
+    # 2) unit test it (for hello resolver)
 
 if __name__ == '__main__':
     unittest.main()

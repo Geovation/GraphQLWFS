@@ -36,5 +36,6 @@ class HelloTestCase(unittest.TestCase):
         result = graphqlwfs(request)
 
         self.assertEqual(len(result["hello"]), 2)
+        
 if __name__ == '__main__':
     unittest.main()
