@@ -1,5 +1,5 @@
 import unittest
-from main import graphqlwfs, fetchFeaturesFromWFS
+from main import graphqlwfs, fetchFeaturesFromWFS, buildWFSQuery
 from unittest.mock import patch
 
 class HelloTestCase(unittest.TestCase):
@@ -52,10 +52,29 @@ class HelloTestCase(unittest.TestCase):
 
         self.assertEqual(result, expected_value)
 
-    # TODO: fetchFeaturesFromWFS is building a query based on the inputs. In order to test only the part that builds the WFS query,
-    # you need to:
-    # 1) extract it (call it "buildWFSQuery")
-    # 2) unit test it (for hello resolver)
+    def test_buildWFSQuery_hello(self):
+        count = 1
+        typeNames = None
+        filters = {
+            "Type": "Education"
+        }
+        payload = buildWFSQuery(count, typeNames, filters)
+
+        self.assertEqual(payload['count'], count)
+        self.assertEqual(payload['typeNames'], typeNames)
+
+        stripedPayloadFilter = payload['filter'].replace(
+            ' ', '').replace('\n', '')
+        expectedFilter = """<Filter>
+                                <PropertyIsEqualTo>
+                                    <PropertyName>Type</PropertyName>
+                                    <Literal>Education</Literal>
+                                    </PropertyIsEqualTo>
+                            </Filter>"""
+        stripedExpectedFilter = expectedFilter.replace(' ', '').replace('\n', '')
+
+        self.assertEqual(stripedPayloadFilter, stripedExpectedFilter)
+
 
 if __name__ == '__main__':
     unittest.main()
