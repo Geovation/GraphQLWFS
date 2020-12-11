@@ -3,11 +3,7 @@ import os
 import graphene
 
 
-def fetchFeaturesFromWFS(count, typeNames, filters):
-    OS_KEY = os.getenv('OS_KEY', '????????')
-    #Edit WFS API Endpoint address here
-    wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(
-        OS_KEY)
+def buildWFSQuery(count, typeNames, filters):
     payload = {
         'typeNames': typeNames,
         'count': count
@@ -25,6 +21,16 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
     if propertyIsEqualTo != "":
         filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
         payload["filter"] = filter
+    
+    return payload
+
+def fetchFeaturesFromWFS(count, typeNames, filters):
+    OS_KEY = os.getenv('OS_KEY', '????????')
+    #Edit WFS API Endpoint address here
+    wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(
+        OS_KEY)
+
+    payload = buildWFSQuery(count, typeNames, filters)
 
     response = requests.get(wfsApiBaseUrl, params=payload)
     if response.status_code != 200:
