@@ -1,6 +1,7 @@
 import requests
 import os
 import graphene
+import json
 
 
 def buildWFSQuery(count, typeNames, filters):
@@ -9,19 +10,20 @@ def buildWFSQuery(count, typeNames, filters):
         'count': count
     }
 
-    propertyIsEqualTo = ""
-    for propertyName, literal in filters.items():
-        propertyIsEqualTo += """
-            <PropertyIsEqualTo>
-                <PropertyName>{0}</PropertyName>
-                <Literal>{1}</Literal>
-            </PropertyIsEqualTo>
-        """.format(propertyName, literal)
+    if filters:
+        # filters dictionary not empty
+        propertyIsEqualTo = ""
+        for propertyName, literal in filters.items():
+            propertyIsEqualTo += """
+                <PropertyIsEqualTo>
+                    <PropertyName>{0}</PropertyName>
+                    <Literal>{1}</Literal>
+                </PropertyIsEqualTo>
+            """.format(propertyName, literal)
 
-    if propertyIsEqualTo != "":
-        filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
-        payload["filter"] = filter
-    
+        if propertyIsEqualTo != "":
+            filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
+            payload["filter"] = filter
     return payload
 
 def fetchFeaturesFromWFS(count, typeNames, filters):
@@ -29,22 +31,35 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
     #Edit WFS API Endpoint address here
     wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(
         OS_KEY)
-
+    
     payload = buildWFSQuery(count, typeNames, filters)
-
     response = requests.get(wfsApiBaseUrl, params=payload)
-    if response.status_code != 200:
+
+    if (response.status_code != 200):
         payloader = print(">>>>>>>>>>>>>>>> payload", payload)
         urlResponse = print(">>>>>>>>>>>>>>>> url", response.url)
         txtResponse = print(">>>>>>>>>>>>>>>> text", response.text)
         headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
-        statusResp = print(">>>>>>>>>>>>>>>> status_code",
-                           response.status_code)
-        return "Error: Check your logs"
-    return response.json()['features']
+        statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
+        return ["Error: Check your logs"]
+    
+    if ('features' in response.json()):
+        return response.json()['features']
+        
+    else:
+        return response.json()
+        
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
 
+def create_filter_hello (propertyName, literal):
+    filters = {}
+
+    # Check for empty filter arguments
+    if ( (propertyName.strip()) and (literal.strip()) ):
+        filters[propertyName] = literal
+
+    return filters
 
 class Query(graphene.ObjectType):
     #Update hello field with valid typenames Zoomstack_Sites
@@ -74,10 +89,14 @@ class Query(graphene.ObjectType):
     #     )
     # }
     def resolve_hello(self, info, count, typeNames, propertyName, literal):
-        filters = {}
-        filters[propertyName] = literal
-        return fetchFeaturesFromWFS(count, typeNames, filters)
+        if (count >= 0 ):
+            filters = create_filter_hello(propertyName, literal)
+            return fetchFeaturesFromWFS(count, typeNames, filters)
 
+        else:
+            return ["Error: Count needs to be 0 or more"]
+
+            
     # {
     #      boundaryLinePollingDistrict(
     #         first: 5,
