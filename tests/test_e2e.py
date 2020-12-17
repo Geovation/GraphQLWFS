@@ -2,7 +2,6 @@ import unittest
 import graphene
 from main import graphqlwfs, Query
 from graphene.test import Client
-import json
 
 # Need this two lines to read .env
 from dotenv import load_dotenv
