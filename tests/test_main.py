@@ -51,6 +51,30 @@ class HelloTestCase(unittest.TestCase):
         result = graphqlwfs(request)
 
         self.assertEqual(result, expected_value)
+    
+    @patch('main.requests.get')
+    def test_empty_filter_parameters(self, mocked_get):
+        response_data = {"features": ["I'm getting this 1", "I'm getting this 2", "I'm getting this also"]}
+        query = ' { hello(count: 2, propertyName: "", literal: " ") } '
+
+        expected_value = {'hello': response_data["features"]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+
+    @patch('main.requests.get')
+    def test_counter_negative(self, mocked_get):
+        response_data = 'Error: Count needs to be 0 or more'
+        query = ' { hello(count: -5, propertyName: "Type", literal: "Education") } '
+
+        expected_value = {'hello': [response_data]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
 
     def test_buildWFSQuery_hello(self):
         count = 1
