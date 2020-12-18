@@ -52,7 +52,7 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
 
-def create_filter_hello (propertyName, literal):
+def create_filter_zoomstackSites (propertyName, literal):
     filters = {}
 
     # Check for empty filter arguments
@@ -83,7 +83,7 @@ class Query(graphene.ObjectType):
     # }
     def resolve_zoomstackSites(self, info, count, propertyName, literal):
         if (count >= 0 ):
-            filters = create_filter_hello(propertyName, literal)
+            filters = create_filter_zoomstackSites(propertyName, literal)
             return fetchFeaturesFromWFS(count = count, typeNames = "Zoomstack_Sites", filters = filters)
 
         else:
