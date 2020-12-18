@@ -4,7 +4,7 @@ import graphene
 import json
 
 
-def buildWFSQuery(count, typeNames, filters):
+def build_query(count, typeNames, filters):
     payload = {
         'typeNames': typeNames,
         'count': count
@@ -12,27 +12,61 @@ def buildWFSQuery(count, typeNames, filters):
 
     if filters:
         # filters dictionary not empty
-        propertyIsEqualTo = ""
-        for propertyName, literal in filters.items():
-            propertyIsEqualTo += """
+
+        if (typeNames == "Zoomstack_Sites"):
+            propertyIsEqualTo = ""
+            for propertyName, literal in filters.items():
+                propertyIsEqualTo += """
+                    <PropertyIsEqualTo>
+                        <PropertyName>{0}</PropertyName>
+                        <Literal>{1}</Literal>
+                    </PropertyIsEqualTo>
+                """.format(propertyName, literal)
+
+            if propertyIsEqualTo != "":
+                filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
+                payload["filter"] = filter
+    
+        elif (typeNames == "Zoomstack_Names"):
+            propertyIsEqualToOne = ""
+            propertyIsEqualToTwo = ""
+            
+            propertyIsEqualToOne = """
                 <PropertyIsEqualTo>
                     <PropertyName>{0}</PropertyName>
                     <Literal>{1}</Literal>
                 </PropertyIsEqualTo>
-            """.format(propertyName, literal)
+            """.format(filters['propertyName'], filters['literal'])
+            
+            if (filters['name1'].strip()):
+                
+                propertyIsEqualToTwo += """
+                    <PropertyIsEqualTo>
+                        <PropertyName>Name1</PropertyName>
+                        <Literal>{0}</Literal>
+                    </PropertyIsEqualTo>
+                """.format(filters['name1'])
+            
+            if ((propertyIsEqualToOne != "") and (propertyIsEqualToTwo != "")):
+                # Both properties are needed for filtering
+                includingAnd = "<And>" + propertyIsEqualToOne + propertyIsEqualToTwo + "</And>"
+                filter = "<Filter>" + includingAnd + "</Filter>"
+                payload["filter"] = filter
+            
+            elif((propertyIsEqualToOne != "") and (propertyIsEqualToTwo == "")):
+                # propertyName and literal filter are not empty
+                filter = "<Filter>" + propertyIsEqualToOne + "</Filter>"
+                payload["filter"] = filter
 
-        if propertyIsEqualTo != "":
-            filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
-            payload["filter"] = filter
     return payload
 
-def fetchFeaturesFromWFS(count, typeNames, filters):
+def get_feature(count, typeNames, filters):
     OS_KEY = os.getenv('OS_KEY', '????????')
     #Edit WFS API Endpoint address here
     wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(
         OS_KEY)
     
-    payload = buildWFSQuery(count, typeNames, filters)
+    payload = build_query(count, typeNames, filters)
     response = requests.get(wfsApiBaseUrl, params=payload)
 
     if (response.status_code != 200):
@@ -69,37 +103,53 @@ class Query(graphene.ObjectType):
         literal=graphene.String(default_value="")
     )
 
-    zoomstackNames = graphene.String(
-        first=graphene.Int(default_value=10),
-        Name1=graphene.String(default_value="BRECON BEACONS NATIONAL PARK")
+    zoomstackNames = graphene.List(graphene.String,
+        count=graphene.Int(default_value=10),
+        propertyName=graphene.String(default_value=""),
+        literal=graphene.String(default_value=""),
+        name1=graphene.String(default_value=""),
+
     )
 
     #   {
-    #      zoomstackSites(
-    #         count: 5,
-    #         propertyName: "Education",
-    #         literal: "Type",
+    #       zoomstackSites(
+    #         count: 10,
+    #         propertyName: "Type",
+    #         literal: "Education",
     #     )
     # }
     def resolve_zoomstackSites(self, info, count, propertyName, literal):
         if (count >= 0 ):
             filters = create_filter_zoomstackSites(propertyName, literal)
-            return fetchFeaturesFromWFS(count = count, typeNames = "Zoomstack_Sites", filters = filters)
+            return get_feature(count = count, typeNames = "Zoomstack_Sites", filters = filters)
 
         else:
             return ["Error: Count needs to be 0 or more"]
             
     #  {
-    #      zoomstackNames(
-    #          first: 5,
-    #          Type: "National Park"
-    #      )
+    #       zoomstackNames(
+    #           count: 10,
+    #           propertyName: "Type",
+    #           literal: "City",
+    #           name1: "Aberdeen",
+    #       )
     #  }
-    def resolve_zoomstackNames(self, info, first, Name1):
-        filters = {
-            "Name1": Name1
-        }
-        return fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_Names", filters=filters)
+    def resolve_zoomstackNames(self, info, count, propertyName, literal, name1):
+        if (count >= 0 ):
+
+            filters = {}
+            # Check for empty filter arguments
+            if ( (propertyName.strip()) and (literal.strip()) ):
+                filters = {
+                    "propertyName": propertyName,
+                    "literal": literal,
+                    "name1": name1
+                }
+
+        else:
+            return ["Error: Count needs to be 0 or more"]
+            
+        return get_feature(count=count, typeNames="Zoomstack_Names", filters=filters)
 
 
 """HTTP Cloud Function.
