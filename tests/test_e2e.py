@@ -16,45 +16,44 @@ class HelloTestCase(unittest.TestCase):
             data = Data()
         return Request()
 
-    def test_no_errors(self):
+    def test_zoomstackSites_no_errors(self):
         schema = graphene.Schema(query=Query)
         client = Client(schema)
-        query = ' { hello(count: 5, propertyName: "Type", literal: "Education") } '
+        query = ' { zoomstackSites(count: 5, propertyName: "Type", literal: "Education") } '
         executed = client.execute(query)
 
-        self.assertNotEqual(executed['data']['hello'][0], 'Error: Check your logs')
+        self.assertNotEqual(executed['data']['zoomstackSites'][0], 'Error: Check your logs')
 
-    def test_count_1_feature(self):
-        query = ' { hello(count: 1, propertyName: "Type", literal: "Education") } '
+    def test_zoomstackSites_count_1_feature(self):
+        query = ' { zoomstackSites(count: 1, propertyName: "Type", literal: "Education") } '
         request = self.make_request(query)
         result = graphqlwfs(request)
         
-        self.assertEqual(len(result["hello"]), 1)
+        self.assertEqual(len(result["zoomstackSites"]), 1)
 
-    def test_count_2_features(self):
-        query = ' { hello(count: 2, propertyName: "Type", literal: "Education") } '
+    def test_zoomstackSites_count_2_features(self):
+        query = ' { zoomstackSites(count: 2, propertyName: "Type", literal: "Education") } '
         request = self.make_request(query)
         result = graphqlwfs(request)
 
-        self.assertEqual(len(result["hello"]), 2)
+        self.assertEqual(len(result["zoomstackSites"]), 2)
     
-    def test_negative_count(self):
+    def test_zoomstackSites_negative_count(self):
         schema = graphene.Schema(query=Query)
         client = Client(schema)
-        query = ' { hello(count: -1, propertyName: "Type", literal: "Education") } '
+        query = ' { zoomstackSites(count: -1, propertyName: "Type", literal: "Education") } '
         executed = client.execute(query)
 
-        self.assertEqual(executed['data']['hello'][0],'Error: Count needs to be 0 or more')
+        self.assertEqual(executed['data']['zoomstackSites'][0],'Error: Count needs to be 0 or more')
 
-    def test_empty_filter(self):
+    def test_zoomstackSites_empty_filter(self):
         schema = graphene.Schema(query=Query)
         client = Client(schema)
-        query = ' { hello(count: 2, propertyName: " " , literal: "    ") } '
+        query = ' { zoomstackSites(count: 2, propertyName: " " , literal: "    ") } '
         executed = client.execute(query)
 
-        self.assertNotEqual(executed['data']['hello'][0], 'Error: Check your logs')
+        self.assertNotEqual(executed['data']['zoomstackSites'][0], 'Error: Check your logs')
     
-
 
 if __name__ == '__main__':
     unittest.main()

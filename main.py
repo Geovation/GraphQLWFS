@@ -62,10 +62,9 @@ def create_filter_hello (propertyName, literal):
     return filters
 
 class Query(graphene.ObjectType):
-    #Update hello field with valid typenames Zoomstack_Sites
-    hello = graphene.List(graphene.String,
+
+    zoomstackSites = graphene.List(graphene.String,
         count=graphene.Int(default_value=10),
-        typeNames=graphene.String(default_value="osfeatures:Zoomstack_Sites"),
         propertyName=graphene.String(default_value=""),
         literal=graphene.String(default_value="")
     )
@@ -76,17 +75,16 @@ class Query(graphene.ObjectType):
     )
 
     #   {
-    #      hello(
+    #      zoomstackSites(
     #         count: 5,
-    #         propertyName: "Ward",
-    #         literal: "Bottisham Ward",
-    #         typeNames: "osfeatures:BoundaryLine_PollingDistrict"
+    #         propertyName: "Education",
+    #         literal: "Type",
     #     )
     # }
-    def resolve_hello(self, info, count, typeNames, propertyName, literal):
+    def resolve_zoomstackSites(self, info, count, propertyName, literal):
         if (count >= 0 ):
             filters = create_filter_hello(propertyName, literal)
-            return fetchFeaturesFromWFS(count, typeNames, filters)
+            return fetchFeaturesFromWFS(count = count, typeNames = "Zoomstack_Sites", filters = filters)
 
         else:
             return ["Error: Count needs to be 0 or more"]

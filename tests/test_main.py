@@ -16,7 +16,7 @@ class HelloTestCase(unittest.TestCase):
     def make_mocked_response(self,data):
         class mockResponse:
             status_code = 200
-            def json(_): return data
+            def json(self): return data
         return mockResponse()
 
     def make_request(self, query):
@@ -29,23 +29,22 @@ class HelloTestCase(unittest.TestCase):
 
     # @patch('main.requests.get', new=make_mocked_request_get('my query here'))
     @patch('main.requests.get')
-    def test_single_feature(self, mocked_get):
+    def test_zoomstackSites_one_feature(self, mocked_get):
         response_data = {"features": ["I'm getting this"]}
-        query = ' { hello(count: 2, propertyName: "Type", literal: "Education") } '
-        expected_value = {'hello': response_data["features"]}
+        query = ' { zoomstackSites(count: 2, propertyName: "Type", literal: "Education") } '
+        expected_value = {'zoomstackSites': response_data["features"]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
         result = graphqlwfs(request)
 
         self.assertEqual(result, expected_value)
 
-
     @patch('main.requests.get')
-    def test_two_features(self, mocked_get):
+    def test_zoomstackSites_two_features(self, mocked_get):
         response_data = {"features": ["I'm getting this 1", "I'm getting this 2"]}
-        query = ' { hello(count: 2, propertyName: "Type", literal: "Education") } '
+        query = ' { zoomstackSites(count: 2, propertyName: "Type", literal: "Education") } '
 
-        expected_value = {'hello': response_data["features"]}
+        expected_value = {'zoomstackSites': response_data["features"]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
         result = graphqlwfs(request)
@@ -53,11 +52,11 @@ class HelloTestCase(unittest.TestCase):
         self.assertEqual(result, expected_value)
     
     @patch('main.requests.get')
-    def test_empty_filter_parameters(self, mocked_get):
+    def test_zoomstackSites_empty_filter_parameters(self, mocked_get):
         response_data = {"features": ["I'm getting this 1", "I'm getting this 2", "I'm getting this also"]}
-        query = ' { hello(count: 2, propertyName: "", literal: " ") } '
+        query = ' { zoomstackSites(count: 2, propertyName: "", literal: " ") } '
 
-        expected_value = {'hello': response_data["features"]}
+        expected_value = {'zoomstackSites': response_data["features"]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
         result = graphqlwfs(request)
@@ -65,18 +64,18 @@ class HelloTestCase(unittest.TestCase):
         self.assertEqual(result, expected_value)
 
     @patch('main.requests.get')
-    def test_counter_negative(self, mocked_get):
+    def test_zoomstackSites_counter_negative(self, mocked_get):
         response_data = 'Error: Count needs to be 0 or more'
-        query = ' { hello(count: -5, propertyName: "Type", literal: "Education") } '
+        query = ' { zoomstackSites(count: -5, propertyName: "Type", literal: "Education") } '
 
-        expected_value = {'hello': [response_data]}
+        expected_value = {'zoomstackSites': [response_data]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
         result = graphqlwfs(request)
 
         self.assertEqual(result, expected_value)
 
-    def test_buildWFSQuery_hello(self):
+    def test_zoomstackSites_buildWFSQuery(self):
         count = 1
         typeNames = None
         filters = {
