@@ -2,6 +2,7 @@ import unittest
 import graphene
 from main import graphqlwfs, Query
 from graphene.test import Client
+import json
 
 # Need this two lines to read .env
 from dotenv import load_dotenv
@@ -15,6 +16,15 @@ class HelloTestCase(unittest.TestCase):
         class Request():
             data = Data()
         return Request()
+
+    def test_getCapabilities_no_errors(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { getCapabilities } '
+        executed = client.execute(query)
+        executed_in_json = json.loads(executed['data']['getCapabilities'])
+
+        self.assertNotEqual(executed_in_json["wfs:WFS_Capabilities"], 'Error: Check your logs')
 
     def test_zoomstackSites_no_errors(self):
         schema = graphene.Schema(query=Query)
