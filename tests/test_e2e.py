@@ -173,6 +173,52 @@ class HelloTestCase(unittest.TestCase):
         executed = client.execute(query)
 
         self.assertNotEqual(executed['data']['zoomstackRailwayStations'][0], 'Error: Check your logs')
+    
+    def test_zoomstackAirports_no_errors(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackAirports(count: 5) } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackAirports'][0], 'Error: Check your logs')
+    
+    def test_zoomstackAirports_count_1_feature(self):
+        query = ' { zoomstackAirports(count: 1) } '
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(len(result["zoomstackAirports"]), 1)
+
+    def test_zoomstackAirports_count_2_features(self):
+        query = ' { zoomstackAirports(count: 2) } '
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(len(result["zoomstackAirports"]), 2)
+    
+    def test_zoomstackAirports_negative_count(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackAirports(count: -2) } '
+        executed = client.execute(query)
+
+        self.assertEqual(executed['data']['zoomstackAirports'][0],'Error: Count needs to be 0 or more')
+
+    def test_zoomstackAirports_empty_filter(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackAirports(count: 5, propertyName: "", name: "  ") } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackAirports'][0], 'Error: Check your logs')
+
+    def test_zoomstackAirports_name(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackAirports(count: 5, propertyName: "Name", name: "Sumburgh Airport") } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackAirports'][0], 'Error: Check your logs')
 
 if __name__ == '__main__':
     unittest.main()

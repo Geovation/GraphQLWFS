@@ -64,7 +64,7 @@ class HelloTestCase(unittest.TestCase):
     
     @patch('main.requests.get')
     def test_zoomstackSites_empty_filter_parameters(self, mocked_get):
-        response_data = {"features": ["I'm getting this 1", "I'm getting this 2", "I'm getting this also"]}
+        response_data = {"features": ["I'm getting this 1", "I'm getting this 2"]}
         query = ' { zoomstackSites(count: 2, propertyName: "", literal: " ") } '
 
         expected_value = {'zoomstackSites': response_data["features"]}
@@ -134,7 +134,7 @@ class HelloTestCase(unittest.TestCase):
     
     @patch('main.requests.get')
     def test_zoomstackNames_empty_filter_parameters(self, mocked_get):
-        response_data = {"features": ["I'm getting this 1", "I'm getting this 2", "I'm getting this also"]}
+        response_data = {"features": ["I'm getting this 1", "I'm getting this 2"]}
         query = ' { zoomstackNames(count: 2, propertyName: "", literal: " ") } '
 
         expected_value = {'zoomstackNames': response_data["features"]}
@@ -239,7 +239,7 @@ class HelloTestCase(unittest.TestCase):
     
     @patch('main.requests.get')
     def test_zoomstackRailwayStations_empty_filter_parameters(self, mocked_get):
-        response_data = {"features": ["I'm getting this 1", "I'm getting this 2", "I'm getting this also"]}
+        response_data = {"features": ["I'm getting this 1", "I'm getting this 2"]}
         query = ' { zoomstackRailwayStations(count: 2, propertyName: "", literal: " ") } '
 
         expected_value = {'zoomstackRailwayStations': response_data["features"]}
@@ -314,6 +314,78 @@ class HelloTestCase(unittest.TestCase):
                                         <Literal>Rogart</Literal>
                                     </PropertyIsEqualTo>
                                 </And>
+                            </Filter>"""
+        stripedExpectedFilter = expectedFilter.replace(' ', '').replace('\n', '')
+
+        self.assertEqual(stripedPayloadFilter, stripedExpectedFilter)
+
+    @patch('main.requests.get')
+    def test_zoomstackAirports_one_feature(self, mocked_get):
+        response_data = {"features": ["I'm getting this"]}
+        query = ' { zoomstackAirports(count: 1) } '
+        expected_value = {'zoomstackAirports': response_data["features"]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+
+    @patch('main.requests.get')
+    def test_zoomstackAirports_two_features(self, mocked_get):
+        response_data = {"features": ["I'm getting this 1", "I'm getting this 2"]}
+        query = ' { zoomstackAirports(count: 2) } '
+
+        expected_value = {'zoomstackAirports': response_data["features"]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+    
+    @patch('main.requests.get')
+    def test_zoomstackAirports_empty_filter_parameters(self, mocked_get):
+        response_data = {"features": ["I'm getting this 1", "I'm getting this 2"]}
+        query = ' { zoomstackAirports(count: 2, propertyName: "", name: " ") } '
+
+        expected_value = {'zoomstackAirports': response_data["features"]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+
+    @patch('main.requests.get')
+    def test_zoomstackAirports_counter_negative(self, mocked_get):
+        response_data = 'Error: Count needs to be 0 or more'
+        query = ' { zoomstackAirports(count: -5) } '
+
+        expected_value = {'zoomstackAirports': [response_data]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+
+    def test_zoomstackAirports_build_query_name(self):
+        count = 1
+        typeNames = "Zoomstack_Airports"
+        filters = {
+            "propertyName": "Name",
+            "name": "Sumburgh Airport"
+        }
+
+        payload = build_query(count, typeNames, filters)
+
+        self.assertEqual(payload['count'], count)
+        self.assertEqual(payload['typeNames'], typeNames)
+
+        stripedPayloadFilter = payload['filter'].replace(
+            ' ', '').replace('\n', '')
+        expectedFilter = """<Filter>
+                                    <PropertyIsEqualTo>
+                                        <PropertyName>Name</PropertyName>
+                                        <Literal>Sumburgh Airport</Literal>
+                                    </PropertyIsEqualTo>
                             </Filter>"""
         stripedExpectedFilter = expectedFilter.replace(' ', '').replace('\n', '')
 

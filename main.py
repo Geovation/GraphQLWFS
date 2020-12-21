@@ -89,6 +89,21 @@ def build_query(count, typeNames, filters):
                 # propertyName and literal filter are not empty
                 filter = "<Filter>" + propertyIsEqualToOne + "</Filter>"
                 payload["filter"] = filter
+        
+        elif (typeNames == "Zoomstack_Airports"):
+            propertyIsEqualTo = ""
+
+            if (len(filters['name'].strip()) != 0):
+                propertyIsEqualTo += """
+                    <PropertyIsEqualTo>
+                        <PropertyName>{0}</PropertyName>
+                        <Literal>{1}</Literal>
+                    </PropertyIsEqualTo>
+                """.format( filters['propertyName'], filters['name'])
+
+            if propertyIsEqualTo != "":
+                filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
+                payload["filter"] = filter
 
     return payload
 
@@ -200,6 +215,13 @@ class Query(graphene.ObjectType):
 
     )
 
+    zoomstackAirports = graphene.List(graphene.String,
+        count=graphene.Int(default_value=10),
+        propertyName=graphene.String(default_value=""),
+        name=graphene.String(default_value=""),
+
+    ) 
+
     # returns in json format after converting from xml received from WFS OS server
     def resolve_getCapabilities(self, info):
         responseOfGetCapabilities = get_capabilities()
@@ -246,7 +268,7 @@ class Query(graphene.ObjectType):
 
             filters = {}
             # Check for empty filter arguments
-            if ( (propertyName.strip()) and (literal.strip()) ):
+            if ( (len(propertyName.strip()) != 0) and (len(literal.strip()) != 0) ):
                 filters = {
                     "propertyName": propertyName,
                     "literal": literal,
@@ -270,7 +292,7 @@ class Query(graphene.ObjectType):
 
             filters = {}
             # Check for empty filter arguments
-            if ( (propertyName.strip()) and (literal.strip()) ):
+            if ( (len(propertyName.strip()) != 0) and (len(literal.strip()) != 0) ):
                 filters = {
                     "propertyName": propertyName,
                     "literal": literal,
@@ -281,6 +303,29 @@ class Query(graphene.ObjectType):
             return ["Error: Count needs to be 0 or more"]
             
         return get_feature(count=count, typeNames="Zoomstack_RailwayStations", filters=filters)
+    
+    #  {
+    #       zoomstackAirports(
+    #           count: 10,
+    #           propertyName: "Name",
+    #           name: "Sumburgh Airport"
+    #       )
+    #  }
+    def resolve_zoomstackAirports(self, info, count, propertyName, name):
+        if (count >= 0 ):
+
+            filters = {}
+            # Check for empty filter arguments
+            if ( (len(propertyName.strip()) != 0) and (len(name.strip()) != 0) ):
+                filters = {
+                    "propertyName": propertyName,
+                    "name": name
+                }
+
+        else:
+            return ["Error: Count needs to be 0 or more"]
+            
+        return get_feature(count=count, typeNames="Zoomstack_Airports", filters=filters)
 
 
 """HTTP Cloud Function.
