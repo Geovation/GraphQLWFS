@@ -54,6 +54,51 @@ class HelloTestCase(unittest.TestCase):
 
         self.assertNotEqual(executed['data']['zoomstackSites'][0], 'Error: Check your logs')
     
+    def test_zoomstackNames_no_errors(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackNames(count: 5, propertyName: "Type", literal: "National Park") } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackNames'][0], 'Error: Check your logs')
+
+    def test_zoomstackNames_count_1_feature(self):
+        query = ' { zoomstackNames(count: 1, propertyName: "Type", literal: "National Park") } '
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(len(result["zoomstackNames"]), 1)
+
+    def test_zoomstackNames_count_2_features(self):
+        query = ' { zoomstackNames(count: 2, propertyName: "Type", literal: "National Park") } '
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(len(result["zoomstackNames"]), 2)
+    
+    def test_zoomstackNames_negative_count(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackNames(count: -2, propertyName: "Type", literal: "National Park") } '
+        executed = client.execute(query)
+
+        self.assertEqual(executed['data']['zoomstackNames'][0],'Error: Count needs to be 0 or more')
+
+    def test_zoomstackNames_empty_filter(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackNames(count: 5, propertyName: "", literal: "  ") } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackNames'][0], 'Error: Check your logs')
+
+    def test_zoomstackNames_name1(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackNames(count: 5, propertyName: "Type", literal: "City", name1: "Aberdeen") } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackNames'][0], 'Error: Check your logs')
 
 if __name__ == '__main__':
     unittest.main()
