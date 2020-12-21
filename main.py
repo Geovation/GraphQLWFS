@@ -57,6 +57,37 @@ def build_query(count, typeNames, filters):
                 # propertyName and literal filter are not empty
                 filter = "<Filter>" + propertyIsEqualToOne + "</Filter>"
                 payload["filter"] = filter
+        
+        elif (typeNames == "Zoomstack_RailwayStations"):
+            propertyIsEqualToOne = ""
+            propertyIsEqualToTwo = ""
+            
+            propertyIsEqualToOne = """
+                <PropertyIsEqualTo>
+                    <PropertyName>{0}</PropertyName>
+                    <Literal>{1}</Literal>
+                </PropertyIsEqualTo>
+            """.format(filters['propertyName'], filters['literal'])
+            
+            if (filters['name'].strip()):
+                
+                propertyIsEqualToTwo += """
+                    <PropertyIsEqualTo>
+                        <PropertyName>Name</PropertyName>
+                        <Literal>{0}</Literal>
+                    </PropertyIsEqualTo>
+                """.format(filters['name'])
+            
+            if ((propertyIsEqualToOne != "") and (propertyIsEqualToTwo != "")):
+                # Both properties are needed for filtering
+                includingAnd = "<And>" + propertyIsEqualToOne + propertyIsEqualToTwo + "</And>"
+                filter = "<Filter>" + includingAnd + "</Filter>"
+                payload["filter"] = filter
+            
+            elif((propertyIsEqualToOne != "") and (propertyIsEqualToTwo == "")):
+                # propertyName and literal filter are not empty
+                filter = "<Filter>" + propertyIsEqualToOne + "</Filter>"
+                payload["filter"] = filter
 
     return payload
 
@@ -111,6 +142,14 @@ class Query(graphene.ObjectType):
 
     )
 
+    zoomstackRailwayStations = graphene.List(graphene.String,
+        count=graphene.Int(default_value=10),
+        propertyName=graphene.String(default_value=""),
+        literal=graphene.String(default_value=""),
+        name=graphene.String(default_value=""),
+
+    )
+
     #   {
     #       zoomstackSites(
     #         count: 10,
@@ -150,6 +189,30 @@ class Query(graphene.ObjectType):
             return ["Error: Count needs to be 0 or more"]
             
         return get_feature(count=count, typeNames="Zoomstack_Names", filters=filters)
+
+    #  {
+    #       zoomstackRailwayStations(
+    #           count: 10,
+    #           propertyName: "Name",
+    #           literal: "Dunrobin Castle"
+    #       )
+    #  }
+    def resolve_zoomstackRailwayStations(self, info, count, propertyName, literal, name):
+        if (count >= 0 ):
+
+            filters = {}
+            # Check for empty filter arguments
+            if ( (propertyName.strip()) and (literal.strip()) ):
+                filters = {
+                    "propertyName": propertyName,
+                    "literal": literal,
+                    "name": name
+                }
+
+        else:
+            return ["Error: Count needs to be 0 or more"]
+            
+        return get_feature(count=count, typeNames="Zoomstack_RailwayStations", filters=filters)
 
 
 """HTTP Cloud Function.

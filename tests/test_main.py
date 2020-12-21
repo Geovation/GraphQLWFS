@@ -31,7 +31,7 @@ class HelloTestCase(unittest.TestCase):
     @patch('main.requests.get')
     def test_zoomstackSites_one_feature(self, mocked_get):
         response_data = {"features": ["I'm getting this"]}
-        query = ' { zoomstackSites(count: 2, propertyName: "Type", literal: "Education") } '
+        query = ' { zoomstackSites(count: 1, propertyName: "Type", literal: "Education") } '
         expected_value = {'zoomstackSites': response_data["features"]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
@@ -101,7 +101,7 @@ class HelloTestCase(unittest.TestCase):
     @patch('main.requests.get')
     def test_zoomstackNames_one_feature(self, mocked_get):
         response_data = {"features": ["I'm getting this"]}
-        query = ' { zoomstackNames(count: 2, propertyName: "Type", literal: "National Park") } '
+        query = ' { zoomstackNames(count: 1, propertyName: "Type", literal: "National Park") } '
         expected_value = {'zoomstackNames': response_data["features"]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
@@ -196,6 +196,111 @@ class HelloTestCase(unittest.TestCase):
                                     <PropertyIsEqualTo>
                                         <PropertyName>Name1</PropertyName>
                                         <Literal>Aberdeen</Literal>
+                                    </PropertyIsEqualTo>
+                                </And>
+                            </Filter>"""
+        stripedExpectedFilter = expectedFilter.replace(' ', '').replace('\n', '')
+
+        self.assertEqual(stripedPayloadFilter, stripedExpectedFilter)
+    
+    @patch('main.requests.get')
+    def test_zoomstackRailwayStations_one_feature(self, mocked_get):
+        response_data = {"features": ["I'm getting this"]}
+        query = ' { zoomstackRailwayStations(count: 1, propertyName: "Type", literal: "Light Rapid Transit Station") } '
+        expected_value = {'zoomstackRailwayStations': response_data["features"]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+
+    @patch('main.requests.get')
+    def test_zoomstackRailwayStations_two_features(self, mocked_get):
+        response_data = {"features": ["I'm getting this 1", "I'm getting this 2"]}
+        query = ' { zoomstackRailwayStations(count: 2, propertyName: "Type", literal: "Light Rapid Transit Station") } '
+
+        expected_value = {'zoomstackRailwayStations': response_data["features"]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+    
+    @patch('main.requests.get')
+    def test_zoomstackRailwayStations_empty_filter_parameters(self, mocked_get):
+        response_data = {"features": ["I'm getting this 1", "I'm getting this 2", "I'm getting this also"]}
+        query = ' { zoomstackRailwayStations(count: 2, propertyName: "", literal: " ") } '
+
+        expected_value = {'zoomstackRailwayStations': response_data["features"]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+
+    @patch('main.requests.get')
+    def test_zoomstackRailwayStations_counter_negative(self, mocked_get):
+        response_data = 'Error: Count needs to be 0 or more'
+        query = ' { zoomstackRailwayStations(count: -5, propertyName: "Type", literal: "Light Rapid Transit Station") } '
+
+        expected_value = {'zoomstackRailwayStations': [response_data]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+
+    def test_zoomstackRailwayStations_build_query(self):
+        count = 1
+        typeNames = "Zoomstack_RailwayStations"
+        filters = {
+            "propertyName": "Type",
+            "literal": "Railway Station",
+            "name": ""
+        }
+
+        payload = build_query(count, typeNames, filters)
+
+        self.assertEqual(payload['count'], count)
+        self.assertEqual(payload['typeNames'], typeNames)
+
+        stripedPayloadFilter = payload['filter'].replace(
+            ' ', '').replace('\n', '')
+        expectedFilter = """<Filter>
+                                <PropertyIsEqualTo>
+                                    <PropertyName>Type</PropertyName>
+                                    <Literal>Railway Station</Literal>
+                                </PropertyIsEqualTo>
+                            </Filter>"""
+        stripedExpectedFilter = expectedFilter.replace(' ', '').replace('\n', '')
+
+        self.assertEqual(stripedPayloadFilter, stripedExpectedFilter)
+
+    def test_zoomstackRailwayStations_build_query_name(self):
+        count = 1
+        typeNames = "Zoomstack_RailwayStations"
+        filters = {
+            "propertyName": "Type",
+            "literal": "Railway Station",
+            "name": "Rogart"
+        }
+
+        payload = build_query(count, typeNames, filters)
+
+        self.assertEqual(payload['count'], count)
+        self.assertEqual(payload['typeNames'], typeNames)
+
+        stripedPayloadFilter = payload['filter'].replace(
+            ' ', '').replace('\n', '')
+        expectedFilter = """<Filter>
+                                <And>
+                                    <PropertyIsEqualTo>
+                                        <PropertyName>Type</PropertyName>
+                                        <Literal>Railway Station</Literal>
+                                    </PropertyIsEqualTo>
+                                    <PropertyIsEqualTo>
+                                        <PropertyName>Name</PropertyName>
+                                        <Literal>Rogart</Literal>
                                     </PropertyIsEqualTo>
                                 </And>
                             </Filter>"""

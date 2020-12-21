@@ -100,5 +100,51 @@ class HelloTestCase(unittest.TestCase):
 
         self.assertNotEqual(executed['data']['zoomstackNames'][0], 'Error: Check your logs')
 
+    def test_zoomstackRailwayStations_no_errors(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackRailwayStations(count: 5, propertyName: "Type", literal: "Light Rapid Transit Station") } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackRailwayStations'][0], 'Error: Check your logs')
+
+    def test_zoomstackRailwayStations_count_1_feature(self):
+        query = ' { zoomstackRailwayStations(count: 1, propertyName: "Type", literal: "Light Rapid Transit Station") } '
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(len(result["zoomstackRailwayStations"]), 1)
+
+    def test_zoomstackRailwayStations_count_2_features(self):
+        query = ' { zoomstackRailwayStations(count: 2, propertyName: "Type", literal: "Light Rapid Transit Station") } '
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(len(result["zoomstackRailwayStations"]), 2)
+    
+    def test_zoomstackRailwayStations_negative_count(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackRailwayStations(count: -2, propertyName: "Type", literal: "Light Rapid Transit Station") } '
+        executed = client.execute(query)
+
+        self.assertEqual(executed['data']['zoomstackRailwayStations'][0],'Error: Count needs to be 0 or more')
+
+    def test_zoomstackRailwayStations_empty_filter(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackRailwayStations(count: 5, propertyName: "", literal: "  ") } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackRailwayStations'][0], 'Error: Check your logs')
+
+    def test_zoomstackRailwayStations_name(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { zoomstackRailwayStations(count: 5, propertyName: "Type", literal: "Railway Station", name: "Rogart") } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['zoomstackRailwayStations'][0], 'Error: Check your logs')
+
 if __name__ == '__main__':
     unittest.main()
