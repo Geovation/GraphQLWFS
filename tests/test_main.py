@@ -31,7 +31,7 @@ class HelloTestCase(unittest.TestCase):
     @patch('main.requests.get')
     def test_zoomstackSites_one_feature(self, mocked_get):
         response_data = {"features": ["I'm getting this"]}
-        query = ' { zoomstackSites(count: 2, propertyName: "Type", literal: "Education") } '
+        query = ' { zoomstackSites(count: 1, propertyName: "Type", literal: "Education") } '
         expected_value = {'zoomstackSites': response_data["features"]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
@@ -101,7 +101,7 @@ class HelloTestCase(unittest.TestCase):
     @patch('main.requests.get')
     def test_zoomstackNames_one_feature(self, mocked_get):
         response_data = {"features": ["I'm getting this"]}
-        query = ' { zoomstackNames(count: 2, propertyName: "Type", literal: "National Park") } '
+        query = ' { zoomstackNames(count: 1, propertyName: "Type", literal: "National Park") } '
         expected_value = {'zoomstackNames': response_data["features"]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
@@ -206,7 +206,7 @@ class HelloTestCase(unittest.TestCase):
     @patch('main.requests.get')
     def test_zoomstackRailwayStations_one_feature(self, mocked_get):
         response_data = {"features": ["I'm getting this"]}
-        query = ' { zoomstackRailwayStations(count: 2, propertyName: "Type", literal: "Light Rapid Transit Station") } '
+        query = ' { zoomstackRailwayStations(count: 1, propertyName: "Type", literal: "Light Rapid Transit Station") } '
         expected_value = {'zoomstackRailwayStations': response_data["features"]}
         mocked_get.return_value = self.make_mocked_response(response_data)
         request = self.make_request(query)
