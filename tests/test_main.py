@@ -29,6 +29,17 @@ class HelloTestCase(unittest.TestCase):
 
     # @patch('main.requests.get', new=make_mocked_request_get('my query here'))
     @patch('main.requests.get')
+    def test_describeFeatureType_empty_typeNames_parameter(self, mocked_get):
+        response_data = '{"xsd:schema": "Error: typeNames parameter cannot be empty"}'
+        query = ' { describeFeatureType(typeNames: "  ") } '
+        expected_value = {'describeFeatureType': response_data}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+        request = self.make_request(query)
+        result = graphqlwfs(request)
+
+        self.assertEqual(result, expected_value)
+    
+    @patch('main.requests.get')
     def test_zoomstackSites_one_feature(self, mocked_get):
         response_data = {"features": ["I'm getting this"]}
         query = ' { zoomstackSites(count: 1, propertyName: "Type", literal: "Education") } '
