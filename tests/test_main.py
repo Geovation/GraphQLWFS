@@ -29,7 +29,7 @@ class HelloTestCase(unittest.TestCase):
 
     # @patch('main.requests.get', new=make_mocked_request_get('my query here'))
     @patch('main.requests.get')
-    def test_describeFeatureType_empty_typeNames_parameters(self, mocked_get):
+    def test_describeFeatureType_empty_typeNames_parameter(self, mocked_get):
         response_data = '{"xsd:schema": "Error: typeNames parameter cannot be empty"}'
         query = ' { describeFeatureType(typeNames: "  ") } '
         expected_value = {'describeFeatureType': response_data}
