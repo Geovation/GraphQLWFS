@@ -115,7 +115,7 @@ def get_feature(count, typeNames, filters):
     else:
         return response.json()
 
-def getCapabilities():
+def get_capabilities():
     OS_KEY = os.getenv('OS_KEY', '????????')
     #Edit WFS API Endpoint address here
     wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=getcapabilities&key={}&version=2.0.0".format(
@@ -134,6 +134,29 @@ def getCapabilities():
 
         return xmltodict.unparse(errorMessage)
     return response.content
+
+def describe_feature_type(typeNames):
+    OS_KEY = os.getenv('OS_KEY', '????????')
+    #Edit WFS API Endpoint address here
+    wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&version=2.0.0&request=DescribeFeatureType&key={}".format(
+        OS_KEY,)
+    payload = {
+        'typeNames': typeNames
+    }
+
+    response = requests.get(wfsApiBaseUrl, params=payload)
+    if response.status_code != 200:
+        urlResponse = print(">>>>>>>>>>>>>>>> url", response.url)
+        txtResponse = print(">>>>>>>>>>>>>>>> text", response.text)
+        headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
+        statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
+   
+        errorMessage = {
+            "xsd:schema": "Error: Check your logs"
+        }
+
+        return xmltodict.unparse(errorMessage)
+    return response.content
         
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
@@ -142,7 +165,7 @@ def create_filter_zoomstackSites (propertyName, literal):
     filters = {}
 
     # Check for empty filter arguments
-    if ( (propertyName.strip()) and (literal.strip()) ):
+    if ( (len(propertyName.strip()) != 0) and (len(literal.strip()) != 0) ):
         filters[propertyName] = literal
 
     return filters
@@ -150,6 +173,10 @@ def create_filter_zoomstackSites (propertyName, literal):
 class Query(graphene.ObjectType):
 
     getCapabilities = graphene.JSONString()
+
+    describeFeatureType = graphene.JSONString(
+        typeNames=graphene.String(required=True, default_value="")
+    )
 
     zoomstackSites = graphene.List(graphene.String,
         count=graphene.Int(default_value=10),
@@ -175,9 +202,21 @@ class Query(graphene.ObjectType):
 
     # returns in json format after converting from xml received from WFS OS server
     def resolve_getCapabilities(self, info):
-        responseOfGetCapabilities = getCapabilities()
+        responseOfGetCapabilities = get_capabilities()
         responseOfGetCapabilitiesInJSON = xmltodict.parse(responseOfGetCapabilities)
         return responseOfGetCapabilitiesInJSON
+    
+    # returns in json format after converting from xml received from WFS OS server
+    def resolve_describeFeatureType(self, info, typeNames):
+
+        if (len(typeNames.strip()) != 0):
+            responseOfDescribeFeatureType = describe_feature_type(typeNames)
+            responseOfDescribeFeatureTypeInJSON = xmltodict.parse(responseOfDescribeFeatureType)
+            return responseOfDescribeFeatureTypeInJSON
+        else:
+            errorMessage = {"xsd:schema": "Error: typeNames parameter cannot be empty"
+            }
+            return errorMessage
 
     #   {
     #       zoomstackSites(

@@ -25,6 +25,24 @@ class HelloTestCase(unittest.TestCase):
         executed_in_json = json.loads(executed['data']['getCapabilities'])
 
         self.assertNotEqual(executed_in_json["wfs:WFS_Capabilities"], 'Error: Check your logs')
+    
+    def test_describeFeatureType_no_errors(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { describeFeatureType(typeNames: "Zoomstack_Names") } '
+        executed = client.execute(query)
+        executed_in_json = json.loads(executed['data']['describeFeatureType'])
+
+        self.assertNotEqual(executed_in_json["xsd:schema"], 'Error: Check your logs')
+    
+    def test_describeFeatureType_empty_typeNames(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { describeFeatureType(typeNames: "  ") } '
+        executed = client.execute(query)
+        executed_in_json = json.loads(executed['data']['describeFeatureType'])
+
+        self.assertEqual(executed_in_json["xsd:schema"], 'Error: typeNames parameter cannot be empty')
 
     def test_zoomstackSites_no_errors(self):
         schema = graphene.Schema(query=Query)
