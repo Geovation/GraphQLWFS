@@ -2,6 +2,7 @@ import requests
 import os
 import graphene
 import json
+import xmltodict
 
 
 def build_query(count, typeNames, filters):
@@ -113,6 +114,26 @@ def get_feature(count, typeNames, filters):
         
     else:
         return response.json()
+
+def getCapabilities():
+    OS_KEY = os.getenv('OS_KEY', '????????')
+    #Edit WFS API Endpoint address here
+    wfsApiBaseUrl = "https://api.os.uk/features/v1/wfs?service=wfs&request=getcapabilities&key={}&version=2.0.0".format(
+        OS_KEY)
+
+    response = requests.get(wfsApiBaseUrl)
+    if response.status_code != 200:
+        urlResponse = print(">>>>>>>>>>>>>>>> url", response.url)
+        txtResponse = print(">>>>>>>>>>>>>>>> text", response.text)
+        headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
+        statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
+   
+        errorMessage = {
+            "wfs:WFS_Capabilities": "Error: Check your logs"
+        }
+
+        return xmltodict.unparse(errorMessage)
+    return response.content
         
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
@@ -127,6 +148,8 @@ def create_filter_zoomstackSites (propertyName, literal):
     return filters
 
 class Query(graphene.ObjectType):
+
+    getCapabilities = graphene.JSONString()
 
     zoomstackSites = graphene.List(graphene.String,
         count=graphene.Int(default_value=10),
@@ -149,6 +172,12 @@ class Query(graphene.ObjectType):
         name=graphene.String(default_value=""),
 
     )
+
+    # returns in json format after converting from xml received from WFS OS server
+    def resolve_getCapabilities(self, info):
+        responseOfGetCapabilities = getCapabilities()
+        responseOfGetCapabilitiesInJSON = xmltodict.parse(responseOfGetCapabilities)
+        return responseOfGetCapabilitiesInJSON
 
     #   {
     #       zoomstackSites(
