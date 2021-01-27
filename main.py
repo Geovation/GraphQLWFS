@@ -3,7 +3,15 @@ import os
 import graphene
 import json
 
-
+def buildEqualToFilter(propertyName, literal):
+    propertyIsEqualTo = """
+                    <PropertyIsEqualTo>
+                        <PropertyName>{0}</PropertyName>
+                        <Literal>{1}</Literal>
+                    </PropertyIsEqualTo>
+                """.format(propertyName, literal)
+    return propertyIsEqualTo
+    
 def buildWFSQuery(count, typeNames, filters):
     payload = {
         'typeNames': typeNames,
@@ -15,41 +23,21 @@ def buildWFSQuery(count, typeNames, filters):
         if (typeNames == "osfeatures:Zoomstack_Sites"):
             propertyIsEqualTo = ""
             for propertyName, literal in filters.items():
-                propertyIsEqualTo += """
-                    <PropertyIsEqualTo>
-                        <PropertyName>{0}</PropertyName>
-                        <Literal>{1}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(propertyName, literal)
+                propertyIsEqualTo += buildEqualToFilter(propertyName=propertyName, literal=literal)
 
             if propertyIsEqualTo != "":
-                filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
-                payload["filter"] = filter
+                payload["filter"] = "<Filter>" + propertyIsEqualTo + "</Filter>"
         
         elif (typeNames == "osfeatures:Zoomstack_Names"):
             propertyIsEqualTo = ""
             for propertyName, literal in filters.items():
-                propertyIsEqualTo += """
-                    <PropertyIsEqualTo>
-                        <PropertyName>{0}</PropertyName>
-                        <Literal>{1}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(propertyName, literal)
+                propertyIsEqualTo += buildEqualToFilter(propertyName=propertyName, literal=literal) 
 
             if propertyIsEqualTo != "":
-                filter = "<Filter>" + propertyIsEqualTo + "</Filter>"
-                payload["filter"] = filter
+                payload["filter"] = "<Filter>" + propertyIsEqualTo + "</Filter>"
 
         elif (typeNames == "osfeatures:Topography_TopographicArea"):
-            propertyIsEqualToOne = ""
-            propertyIsEqualToTwo = ""
-            propertyIsEqualToThree = ""
-            propertyIsEqualToFour = ""
-            propertyIsEqualToFive = ""
-            propertyIsEqualToSix = ""
-            propertyIsEqualToSeven = ""
-            propertyIsEqualToEight = ""
-
+            propertyIsEqualToList = ["", "", "", "", "", "", "", ""]
             propertyList = [False, False, False, False, False, False, False, False]
             multipleProperty = ""
             multiplePropertyCount = 0
@@ -57,80 +45,40 @@ def buildWFSQuery(count, typeNames, filters):
             if ( filters['TOID'] != None ):
                 if (len(filters['TOID'].strip()) != 0):
                     propertyList[0] = True
-                    propertyIsEqualToOne = """
-                    <PropertyIsEqualTo>
-                        <PropertyName>TOID</PropertyName>
-                        <Literal>{0}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(filters['TOID'])
+                    propertyIsEqualToList.insert( 0, buildEqualToFilter(propertyName="TOID", literal=filters['TOID']) )
+
 
             if ( filters['featureCode'] != None ):
                     propertyList[1] = True
-                    propertyIsEqualToTwo = """
-                    <PropertyIsEqualTo>
-                        <PropertyName>featureCode</PropertyName>
-                        <Literal>{0}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(filters['featureCode'])
+                    propertyIsEqualToList.insert( 1, buildEqualToFilter(propertyName="featureCode", literal=filters['featureCode']) )
 
-            
             if ( filters['theme'] != None ):
                 if (len(filters['theme'].strip()) != 0):
                     propertyList[2] = True
-                    propertyIsEqualToThree = """
-                    <PropertyIsEqualTo>
-                        <PropertyName>theme</PropertyName>
-                        <Literal>{0}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(filters['theme'])
+                    propertyIsEqualToList.insert( 2, buildEqualToFilter(propertyName="theme", literal=filters['theme']) )
    
             if ( filters['calculatedAreaValue'] != None ):
                     propertyList[3] = True
-                    propertyIsEqualToFour = """
-                    <PropertyIsEqualTo>
-                        <PropertyName>calculatedAreaValue</PropertyName>
-                        <Literal>{0}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(filters['calculatedAreaValue'])
+                    propertyIsEqualToList.insert( 3, buildEqualToFilter(propertyName="calculatedAreaValue", literal=filters['calculatedAreaValue']) )
   
             if ( filters['reasonForChange'] != None ):
                 if (len(filters['reasonForChange'].strip()) != 0):
                     propertyList[4] = True
-                    propertyIsEqualToFive = """
-                    <PropertyIsEqualTo>
-                        <PropertyName>reasonForChange</PropertyName>
-                        <Literal>{0}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(filters['reasonForChange'])
+                    propertyIsEqualToList.insert( 4, buildEqualToFilter(propertyName="reasonForChange", literal=filters['reasonForChange']) )
 
             if ( filters['descriptiveGroup'] != None ):
                 if (len(filters['descriptiveGroup'].strip()) != 0):
                     propertyList[5] = True
-                    propertyIsEqualToSix = """
-                    <PropertyIsEqualTo>
-                        <PropertyName>descriptiveGroup</PropertyName>
-                        <Literal>{0}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(filters['descriptiveGroup'])
+                    propertyIsEqualToList.insert( 5, buildEqualToFilter(propertyName="descriptiveGroup", literal=filters['descriptiveGroup']) )
 
             if ( filters['make'] != None ):
                 if (len(filters['make'].strip()) != 0):
                     propertyList[6] = True
-                    propertyIsEqualToSeven = """
-                    <PropertyIsEqualTo>
-                        <PropertyName>make</PropertyName>
-                        <Literal>{0}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(filters['make'])
+                    propertyIsEqualToList.insert( 6, buildEqualToFilter(propertyName="make", literal=filters['make']) )
             
             if ( filters['physicalLevel'] != None ):
                     propertyList[7] = True
-                    propertyIsEqualToEight = """
-                    <PropertyIsEqualTo>
-                        <PropertyName>physicalLevel</PropertyName>
-                        <Literal>{0}</Literal>
-                    </PropertyIsEqualTo>
-                """.format(filters['physicalLevel'])
+                    propertyIsEqualToList.insert( 7, buildEqualToFilter(propertyName="physicalLevel", literal=filters['physicalLevel']) )
 
             # Create property list inside the And tag
             for i in range(len(propertyList)):
@@ -138,34 +86,33 @@ def buildWFSQuery(count, typeNames, filters):
 
                     if (i == 0):
                         multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToOne
+                        multipleProperty = multipleProperty + propertyIsEqualToList[0]
                     elif (i == 1):
                         multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToTwo
+                        multipleProperty = multipleProperty + propertyIsEqualToList[1]
                     elif (i == 2):
                         multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToThree
+                        multipleProperty = multipleProperty + propertyIsEqualToList[2]
                     elif (i == 3):
                         multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToFour
+                        multipleProperty = multipleProperty + propertyIsEqualToList[3]
                     elif (i == 4):
                         multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToFive
+                        multipleProperty = multipleProperty + propertyIsEqualToList[4]
                     elif (i == 5):
                         multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToSix
+                        multipleProperty = multipleProperty + propertyIsEqualToList[5]
                     elif (i == 6):
                         multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToSeven
+                        multipleProperty = multipleProperty + propertyIsEqualToList[6]
                     elif (i == 7):
                         multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToEight
+                        multipleProperty = multipleProperty + propertyIsEqualToList[7]
 
             if (multiplePropertyCount > 1):
                 multipleProperty = "<And>" + multipleProperty + "</And>"
-            
-            filter = "<Filter>" + multipleProperty + "</Filter>"
-            payload["filter"] = filter
+
+            payload["filter"] = "<Filter>" + multipleProperty + "</Filter>"
             
     return payload
 
