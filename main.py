@@ -17,7 +17,7 @@ def buildWFSQuery(count, typeNames, filters):
         'typeNames': typeNames,
         'count': count
     }
-
+    
     if filters:
         # filters dictionary not empty
         if (typeNames == "osfeatures:Zoomstack_Sites"):
@@ -84,36 +84,14 @@ def buildWFSQuery(count, typeNames, filters):
             for i in range(len(propertyList)):
                 if propertyList[i]:
 
-                    if (i == 0):
-                        multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToList[0]
-                    elif (i == 1):
-                        multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToList[1]
-                    elif (i == 2):
-                        multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToList[2]
-                    elif (i == 3):
-                        multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToList[3]
-                    elif (i == 4):
-                        multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToList[4]
-                    elif (i == 5):
-                        multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToList[5]
-                    elif (i == 6):
-                        multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToList[6]
-                    elif (i == 7):
-                        multiplePropertyCount = multiplePropertyCount + 1
-                        multipleProperty = multipleProperty + propertyIsEqualToList[7]
+                    multiplePropertyCount = multiplePropertyCount + 1
+                    multipleProperty = multipleProperty + propertyIsEqualToList[i]
 
             if (multiplePropertyCount > 1):
                 multipleProperty = "<And>" + multipleProperty + "</And>"
 
             payload["filter"] = "<Filter>" + multipleProperty + "</Filter>"
-            
+           
     return payload
 
 def fetchFeaturesFromWFS(count, typeNames, filters):
