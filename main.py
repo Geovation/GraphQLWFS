@@ -42,44 +42,44 @@ def buildWFSQuery(count, typeNames, filters):
             multipleProperty = ""
             multiplePropertyCount = 0
 
-            if ( filters['TOID'] != None ):
-                if (len(filters['TOID'].strip()) != 0):
-                    propertyList[0] = True
-                    propertyIsEqualToList.insert( 0, buildEqualToFilter(propertyName="TOID", literal=filters['TOID']) )
+            for element in filters:
+                if (filters[element] != None):
+                    
+                    if (element == "TOID" or element == "theme" or element == "reasonForChange" or element == "descriptiveGroup" or element == "make"):
+                        if (len(filters[element].strip()) != 0):
+                            if (element == "TOID"):
+                                propertyList[0] = True
+                                propertyIsEqualToList.insert( 0, buildEqualToFilter(propertyName="TOID", literal=filters['TOID']) )
 
+                            elif (element == "theme"):
+                                propertyList[2] = True
+                                propertyIsEqualToList.insert( 2, buildEqualToFilter(propertyName="theme", literal=filters['theme']) )
+                                
+                            elif (element == "reasonForChange"):
+                                propertyList[4] = True
+                                propertyIsEqualToList.insert( 4, buildEqualToFilter(propertyName="reasonForChange", literal=filters['reasonForChange']) )
+                                
+                            elif (element == "descriptiveGroup"):
+                                propertyList[5] = True
+                                propertyIsEqualToList.insert( 5, buildEqualToFilter(propertyName="descriptiveGroup", literal=filters['descriptiveGroup']) )
 
-            if ( filters['featureCode'] != None ):
-                    propertyList[1] = True
-                    propertyIsEqualToList.insert( 1, buildEqualToFilter(propertyName="featureCode", literal=filters['featureCode']) )
+                            elif (element == "make"):
+                                propertyList[6] = True
+                                propertyIsEqualToList.insert( 6, buildEqualToFilter(propertyName="make", literal=filters['make']) )
 
-            if ( filters['theme'] != None ):
-                if (len(filters['theme'].strip()) != 0):
-                    propertyList[2] = True
-                    propertyIsEqualToList.insert( 2, buildEqualToFilter(propertyName="theme", literal=filters['theme']) )
-   
-            if ( filters['calculatedAreaValue'] != None ):
-                    propertyList[3] = True
-                    propertyIsEqualToList.insert( 3, buildEqualToFilter(propertyName="calculatedAreaValue", literal=filters['calculatedAreaValue']) )
-  
-            if ( filters['reasonForChange'] != None ):
-                if (len(filters['reasonForChange'].strip()) != 0):
-                    propertyList[4] = True
-                    propertyIsEqualToList.insert( 4, buildEqualToFilter(propertyName="reasonForChange", literal=filters['reasonForChange']) )
+                    else:
+                        if (element == "featureCode"):
+                            propertyList[1] = True
+                            propertyIsEqualToList.insert( 1, buildEqualToFilter(propertyName="featureCode", literal=filters['featureCode']) )
 
-            if ( filters['descriptiveGroup'] != None ):
-                if (len(filters['descriptiveGroup'].strip()) != 0):
-                    propertyList[5] = True
-                    propertyIsEqualToList.insert( 5, buildEqualToFilter(propertyName="descriptiveGroup", literal=filters['descriptiveGroup']) )
+                        elif (element == "calculatedAreaValue"):
+                            propertyList[3] = True
+                            propertyIsEqualToList.insert( 3, buildEqualToFilter(propertyName="calculatedAreaValue", literal=filters['calculatedAreaValue']) )
 
-            if ( filters['make'] != None ):
-                if (len(filters['make'].strip()) != 0):
-                    propertyList[6] = True
-                    propertyIsEqualToList.insert( 6, buildEqualToFilter(propertyName="make", literal=filters['make']) )
-            
-            if ( filters['physicalLevel'] != None ):
-                    propertyList[7] = True
-                    propertyIsEqualToList.insert( 7, buildEqualToFilter(propertyName="physicalLevel", literal=filters['physicalLevel']) )
-
+                        elif (element == "physicalLevel"):
+                            propertyList[7] = True
+                            propertyIsEqualToList.insert( 7, buildEqualToFilter(propertyName="physicalLevel", literal=filters['physicalLevel']) )
+                    
             # Create property list inside the And tag
             for i in range(len(propertyList)):
                 if propertyList[i]:
