@@ -20,23 +20,8 @@ def buildWFSQuery(count, typeNames, filters):
     
     if filters:
         # filters dictionary not empty
-        if (typeNames == "osfeatures:Zoomstack_Sites"):
-            propertyIsEqualTo = ""
-            for propertyName, literal in filters.items():
-                propertyIsEqualTo += buildEqualToFilter(propertyName=propertyName, literal=literal)
 
-            if propertyIsEqualTo != "":
-                payload["filter"] = "<Filter>" + propertyIsEqualTo + "</Filter>"
-        
-        elif (typeNames == "osfeatures:Zoomstack_Names"):
-            propertyIsEqualTo = ""
-            for propertyName, literal in filters.items():
-                propertyIsEqualTo += buildEqualToFilter(propertyName=propertyName, literal=literal) 
-
-            if propertyIsEqualTo != "":
-                payload["filter"] = "<Filter>" + propertyIsEqualTo + "</Filter>"
-
-        elif (typeNames == "osfeatures:Topography_TopographicArea"):
+        if (typeNames == "osfeatures:Topography_TopographicArea"):
             propertyIsEqualToList = ["", "", "", "", "", "", "", ""]
             propertyList = [False, False, False, False, False, False, False, False]
             multipleProperty = ""
@@ -120,28 +105,7 @@ def fetchFeaturesFromWFS(count, typeNames, filters):
 # Getting started with GraphQL. In this way we can extract data from the query.
 # TODO: Next step is to convert this in a proper query.
 
-def create_filter_hello (propertyName, literal):
-    filters = {}
-
-    # Check for empty filter arguments
-    if ( (propertyName.strip()) and (literal.strip()) ):
-        filters[propertyName] = literal
-
-    return filters
-
 class Query(graphene.ObjectType):
-    #Update hello field with valid typenames Zoomstack_Sites
-    hello = graphene.List(graphene.String,
-        count=graphene.Int(default_value=10),
-        typeNames=graphene.String(default_value="osfeatures:Zoomstack_Sites"),
-        propertyName=graphene.String(default_value=""),
-        literal=graphene.String(default_value="")
-    )
-
-    zoomstackNames = graphene.String(
-        first=graphene.Int(default_value=10),
-        Name1=graphene.String(default_value="BRECON BEACONS NATIONAL PARK")
-    )
 
     topographyTopographicArea = graphene.List(graphene.String,
         first=graphene.Int(),
@@ -154,34 +118,6 @@ class Query(graphene.ObjectType):
         make=graphene.String(),
         physicalLevel=graphene.Int(),
     )
-
-    #   {
-    #      hello(
-    #         count: 5,
-    #         propertyName: "Ward",
-    #         literal: "Bottisham Ward",
-    #         typeNames: "osfeatures:BoundaryLine_PollingDistrict"
-    #     )
-    # }
-    def resolve_hello(self, info, count, typeNames, propertyName, literal):
-        if (count >= 0 ):
-            filters = create_filter_hello(propertyName, literal)
-            return fetchFeaturesFromWFS(count, typeNames, filters)
-
-        else:
-            return ["Error: Count needs to be 0 or more"]
-
-    #  {
-    #      zoomstackNames(
-    #          first: 5,
-    #          Type: "National Park"
-    #      )
-    #  }
-    def resolve_zoomstackNames(self, info, first, Name1):
-        filters = {
-            "Name1": Name1
-        }
-        return fetchFeaturesFromWFS(count=first, typeNames="osfeatures:Zoomstack_Names", filters=filters)
 
     # {
     #      topographyTopographicArea(
