@@ -1,5 +1,5 @@
 import unittest
-from main import graphqlwfs, fetchFeaturesFromWFS, buildWFSQuery
+from main import graphqlwfs, fetch_feature_from_wfs, build_wfs_query
 from unittest.mock import patch
 
 class HelloTestCase(unittest.TestCase):
@@ -75,7 +75,7 @@ class HelloTestCase(unittest.TestCase):
 
         self.assertEqual(result, expected_value)
 
-    def test_topographyTopographicArea_buildWFSQuery_single_filter(self):
+    def test_topographyTopographicArea_buildWFSQuery_single_filter_PropertyIsEqualTo(self):
         first = 1
         typeNames = "osfeatures:Topography_TopographicArea"
         filters = {
@@ -86,9 +86,10 @@ class HelloTestCase(unittest.TestCase):
             "reasonForChange": None,
             "descriptiveGroup": None,
             "make": None,
-            "physicalLevel": None
+            "physicalLevel": None,
+            "filterTag": "PropertyIsEqualTo",
         }
-        payload = buildWFSQuery(first, typeNames, filters)
+        payload = build_wfs_query(first, typeNames, filters)
 
         self.assertEqual(payload['count'], first)
         self.assertEqual(payload['typeNames'], typeNames)
@@ -105,7 +106,7 @@ class HelloTestCase(unittest.TestCase):
 
         self.assertEqual(stripedPayloadFilter, stripedExpectedFilter)
 
-    def test_topographyTopographicArea_buildWFSQuery_triple_filter(self):
+    def test_topographyTopographicArea_buildWFSQuery_triple_filter_PropertyIsEqualTo(self):
         first = 1
         typeNames = "osfeatures:Topography_TopographicArea"
         filters = {
@@ -116,9 +117,10 @@ class HelloTestCase(unittest.TestCase):
             "reasonForChange": None,
             "descriptiveGroup": None,
             "make": "Manmade",
-            "physicalLevel": None
+            "physicalLevel": None,
+            "filterTag": "PropertyIsEqualTo",
         }
-        payload = buildWFSQuery(first, typeNames, filters)
+        payload = build_wfs_query(first, typeNames, filters)
 
         self.assertEqual(payload['count'], first)
         self.assertEqual(payload['typeNames'], typeNames)
@@ -140,6 +142,37 @@ class HelloTestCase(unittest.TestCase):
                                         <Literal>Manmade</Literal>
                                     </PropertyIsEqualTo>
                                 </And>
+                            </Filter>"""
+        stripedExpectedFilter = expectedFilter.replace(' ', '').replace('\n', '')
+
+        self.assertEqual(stripedPayloadFilter, stripedExpectedFilter)
+
+    def test_topographyTopographicArea_buildWFSQuery_filter_PropertyIsLessThan(self):
+        first = 1
+        typeNames = "osfeatures:Topography_TopographicArea"
+        filters = {
+            "TOID": None,
+            "featureCode": None,
+            "theme": None,
+            "calculatedAreaValue": 60.0,
+            "reasonForChange": None,
+            "descriptiveGroup": None,
+            "make": None,
+            "physicalLevel": None,
+            "filterTag": "PropertyIsLessThan",
+        }
+        payload = build_wfs_query(first, typeNames, filters)
+
+        self.assertEqual(payload['count'], first)
+        self.assertEqual(payload['typeNames'], typeNames)
+
+        stripedPayloadFilter = payload['filter'].replace(
+            ' ', '').replace('\n', '')
+        expectedFilter = """<Filter>
+                                <PropertyIsLessThan>
+                                    <PropertyName>calculatedAreaValue</PropertyName>
+                                    <Literal>60.0</Literal>
+                                    </PropertyIsLessThan>
                             </Filter>"""
         stripedExpectedFilter = expectedFilter.replace(' ', '').replace('\n', '')
 
