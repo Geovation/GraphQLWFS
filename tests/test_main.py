@@ -87,7 +87,7 @@ class HelloTestCase(unittest.TestCase):
             "descriptiveGroup": None,
             "make": None,
             "physicalLevel": None,
-            "filterTag": "PropertyIsEqualTo",
+            "filterTag": "_eq",
         }
         payload = build_wfs_query(first, typeNames, filters)
 
@@ -118,7 +118,7 @@ class HelloTestCase(unittest.TestCase):
             "descriptiveGroup": None,
             "make": "Manmade",
             "physicalLevel": None,
-            "filterTag": "PropertyIsEqualTo",
+            "filterTag": "_eq",
         }
         payload = build_wfs_query(first, typeNames, filters)
 
@@ -159,7 +159,7 @@ class HelloTestCase(unittest.TestCase):
             "descriptiveGroup": None,
             "make": None,
             "physicalLevel": None,
-            "filterTag": "PropertyIsLessThan",
+            "filterTag": "_lt",
         }
         payload = build_wfs_query(first, typeNames, filters)
 

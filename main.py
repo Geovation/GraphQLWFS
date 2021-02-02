@@ -28,25 +28,25 @@ def build_filter_property_is_less_than(propertyName, literal):
 def call_build_filter_item(propertyName, literal, filterTag):
     propertyString = ""
 
-    if ( filterTag == "PropertyIsEqualTo" ):
+    if ( filterTag == "PropertyIsEqualTo" or filterTag == "_eq"):
         propertyString = build_filter_property_is_equal_to(propertyName, literal)
 
-    elif( filterTag == "PropertyIsNotEqualTo" ):
+    elif( filterTag == "PropertyIsNotEqualTo" or filterTag == "_neq" ):
         print("PropertyIsNotEqualTo")
 
-    elif( filterTag == "PropertyIsLessThan" ):
+    elif( filterTag == "PropertyIsLessThan" or filterTag == "_lt" ):
         propertyString = build_filter_property_is_less_than(propertyName, literal)
 
-    elif( filterTag == "PropertyIsGreaterThan" ):
+    elif( filterTag == "PropertyIsGreaterThan" or filterTag == "_gt" ):
         print("PropertyIsGreaterThan")
 
-    elif( filterTag == "PropertyIsLessThanOrEqualTo" ):
+    elif( filterTag == "PropertyIsLessThanOrEqualTo" or filterTag == "_lte" ):
         print("PropertyIsLessThanOrEqualTo")
 
-    elif( filterTag == "PropertyIsGreaterThanOrEqualTo" ):
+    elif( filterTag == "PropertyIsGreaterThanOrEqualTo" or filterTag == "_gte" ):
         print("PropertyIsGreaterThanOrEqualTo")
 
-    elif( filterTag == "PropertyIsLike" ):
+    elif( filterTag == "PropertyIsLike" or filterTag == "_like" ):
         print("PropertyIsLike")
 
     elif( filterTag == "PropertyIsBetween" ):
@@ -154,7 +154,7 @@ def fetch_feature_from_wfs(count, typeNames, filters):
         
     else:
         return response.json()    
-
+        
 # Query class defines the GraphQL query and the corresponding resolve function as well.
 class Query(graphene.ObjectType):
     
@@ -182,10 +182,10 @@ class Query(graphene.ObjectType):
     #         descriptiveGroup: "Building",
     #         make: "Manmade",
     #         physicalLevel: 50,
-    #         filterTag: "PropertyIsEqualTo"
+    #         filterTag: "_eq"
     #     )
     # }
-    def resolve_topographyTopographicArea(self, info, first=1, toid=None, featureCode=None, theme=None, calculatedAreaValue=None, reasonForChange=None, descriptiveGroup=None, make=None, physicalLevel=None, filterTag="PropertyIsEqualTo"):
+    def resolve_topographyTopographicArea(self, info, first=1, toid=None, featureCode=None, theme=None, calculatedAreaValue=None, reasonForChange=None, descriptiveGroup=None, make=None, physicalLevel=None, filterTag="_eq"):
         if (first >= 0 or first == None):
             filters =  {
                 "TOID": toid,
@@ -198,7 +198,12 @@ class Query(graphene.ObjectType):
                 "physicalLevel": physicalLevel,
             }
 
-            if filterTag in constant.FILTERTAG:
+            if filterTag in constant.GRAPHQL_FILTERTAG:
+                # _conditional in GraphQL convention
+                filters["filterTag"] = filterTag
+            
+            elif filterTag in constant.FILTERTAG:
+                # conditional with respect to OGC standard
                 filters["filterTag"] = filterTag
             
             else:
