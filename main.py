@@ -154,11 +154,25 @@ def fetch_feature_from_wfs(count, typeNames, filters):
         
     else:
         return response.json()    
-        
+
 # Query class defines the GraphQL query and the corresponding resolve function as well.
 class Query(graphene.ObjectType):
     
+    #topographyTopographicArea = graphene.List(graphene.String,
+    #    first=graphene.Int(),
+    #    toid=graphene.String(),
+    #    featureCode=graphene.Int(),
+    #    theme=graphene.String(),
+    #    calculatedAreaValue=graphene.Float(),
+    #    reasonForChange=graphene.String(),
+    #    descriptiveGroup=graphene.String(),
+    #    make=graphene.String(),
+    #    physicalLevel=graphene.Int(),
+    #    filterTag=graphene.String(),
+    #)
+
     topographyTopographicArea = graphene.List(graphene.String,
+        filter=graphene.JSONString(),
         first=graphene.Int(),
         toid=graphene.String(),
         featureCode=graphene.Int(),
@@ -168,7 +182,8 @@ class Query(graphene.ObjectType):
         descriptiveGroup=graphene.String(),
         make=graphene.String(),
         physicalLevel=graphene.Int(),
-        filterTag=graphene.String(),
+        filterTag=graphene.String()
+        
     )
 
     # {
@@ -185,7 +200,8 @@ class Query(graphene.ObjectType):
     #         filterTag: "_eq"
     #     )
     # }
-    def resolve_topographyTopographicArea(self, info, first=1, toid=None, featureCode=None, theme=None, calculatedAreaValue=None, reasonForChange=None, descriptiveGroup=None, make=None, physicalLevel=None, filterTag="_eq"):
+    def resolve_topographyTopographicArea(self, info, filter={}, first=1, toid=None, featureCode=None, theme=None, calculatedAreaValue=None, reasonForChange=None, descriptiveGroup=None, make=None, physicalLevel=None, filterTag="_eq"):  
+
         if (first >= 0 or first == None):
             filters =  {
                 "TOID": toid,
@@ -198,7 +214,13 @@ class Query(graphene.ObjectType):
                 "physicalLevel": physicalLevel,
             }
 
-            if filterTag in constant.GRAPHQL_FILTERTAG:
+            if filter:
+                for propertyName in filter:
+                    for filterName in filter[propertyName]:
+                        filters[propertyName] = filter[propertyName][filterName]
+                        filters["filterTag"] = filterName
+
+            elif filterTag in constant.GRAPHQL_FILTERTAG:
                 # _conditional in GraphQL convention
                 filters["filterTag"] = filterTag
             
