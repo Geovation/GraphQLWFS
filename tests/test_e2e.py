@@ -33,5 +33,13 @@ class HelloTestCase(unittest.TestCase):
 
         self.assertNotEqual(executed['data']['topographyTopographicArea'][0], 'Error: Check your logs')
     
+    def test_topographyTopographicArea_lt(self):
+        schema = graphene.Schema(query=Query)
+        client = Client(schema)
+        query = ' { topographyTopographicArea( first: 5, filter: "{ \\"calculatedAreaValue\\" : {\\"_lt\\" : 60.0 } }" ) } '
+        executed = client.execute(query)
+
+        self.assertNotEqual(executed['data']['topographyTopographicArea'][0], 'Error: Check your logs')
+    
 if __name__ == '__main__':
     unittest.main()
