@@ -200,6 +200,10 @@ class Query(graphene.ObjectType):
     #         filterTag: "_eq"
     #     )
     # }
+    # For less than filtering to trigger use:
+    
+    # { topographyTopographicArea( first: 1,  filter : { calculatedAreaValue : { _lt :  60.0 }  })  } 
+
     def resolve_topographyTopographicArea(self, info, filter={}, first=1, toid=None, featureCode=None, theme=None, calculatedAreaValue=None, reasonForChange=None, descriptiveGroup=None, make=None, physicalLevel=None, filterTag="_eq"):  
 
         if (first >= 0 or first == None):
