@@ -1,7 +1,7 @@
 import unittest
-from main import graphqlwfs, fetch_feature_from_wfs, build_wfs_query
 from unittest.mock import patch
 
+from main import graphqlwfs, fetch_feature_from_wfs, build_wfs_query
 class HelloTestCase(unittest.TestCase):
     # def make_mocked_request_get(data):
     #     def mocked_request_get(*args, **kwargs):
@@ -51,6 +51,29 @@ class HelloTestCase(unittest.TestCase):
 
         self.assertEqual(result, expected_value)
     
+    @patch('main.build_wfs_query')
+    @patch('main.requests.get')
+    def check_is_wfs_build_correctly(self, query, wfs_expected, mocked_get, mocked_build_wfs_query ):
+        def save_wfs_returned(*args, **kwargs):
+            save_wfs_returned.wfs_returned = build_wfs_query(*args, **kwargs)
+            return save_wfs_returned.wfs_returned
+        mocked_build_wfs_query.side_effect = save_wfs_returned
+
+        response_data = {"features": [ "I'm getting this 1"]}
+        mocked_get.return_value = self.make_mocked_response(response_data)
+
+        request = self.make_request(query)
+        graphqlwfs(request)
+
+        self.assertEqual(wfs_expected, save_wfs_returned.wfs_returned)
+
+    def test_graphQL2WFS_topographyTopographicArea(self):
+        query = ' { topographyTopographicArea(first: 1) } '
+        wfs_expected = {
+            'typeNames': 'osfeatures:Topography_TopographicArea', 'count': 1}
+
+        self.check_is_wfs_build_correctly(query, wfs_expected)
+
     @patch('main.requests.get')
     def test_topographyTopographicArea_empty_filter_parameters(self, mocked_get):
         response_data = {"features": ["I'm getting this 1", "I'm getting this 2"]}
