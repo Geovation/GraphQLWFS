@@ -46,7 +46,6 @@ class HelloTestCase(unittest.TestCase):
         client = Client(schema)
         query = ' { topographyTopographicArea( first: 5, filter: "{ \\"calculatedAreaValue\\" : {\\"_gt\\" : 40.0 } }" ) } '
         executed = client.execute(query)
-        print(executed, flush=True)
 
         self.assertNotEqual(executed['data']['topographyTopographicArea'][0], 'Error: Check your logs')
     
