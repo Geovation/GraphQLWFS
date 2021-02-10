@@ -24,6 +24,16 @@ def build_filter_property_is_less_than(propertyName, literal):
                 """.format(propertyName, literal)
     return propertyIsLessThan
 
+# build_filter_property_is_greater_than builds PropertyIsGreaterThan block item which would later be enclosed in Filter tag.
+def build_filter_property_is_greater_than(propertyName, literal):
+    propertyIsGreaterThan = """
+                    <PropertyIsGreaterThan>
+                        <PropertyName>{0}</PropertyName>
+                        <Literal>{1}</Literal>
+                    </PropertyIsGreaterThan>
+                """.format(propertyName, literal)
+    return propertyIsGreaterThan
+
 # call_build_filter_item creates property conditional block depending on the custom filterTag variable provided by the client.
 def call_build_filter_item(propertyName, literal, filterTag):
     propertyString = ""
@@ -38,7 +48,7 @@ def call_build_filter_item(propertyName, literal, filterTag):
         propertyString = build_filter_property_is_less_than(propertyName, literal)
 
     elif( filterTag == "PropertyIsGreaterThan" or filterTag == "_gt" ):
-        print("PropertyIsGreaterThan")
+        propertyString = build_filter_property_is_greater_than(propertyName, literal)
 
     elif( filterTag == "PropertyIsLessThanOrEqualTo" or filterTag == "_lte" ):
         print("PropertyIsLessThanOrEqualTo")
@@ -200,9 +210,12 @@ class Query(graphene.ObjectType):
     #         filterTag: "_eq"
     #     )
     # }
-    # For less than filtering to trigger use:
-    
-    # { topographyTopographicArea( first: 1,  filter : { calculatedAreaValue : { _lt :  60.0 }  })  } 
+    #
+    # For less than filtering to trigger, use:
+    # { topographyTopographicArea( first: 1,  filter : { calculatedAreaValue : { _lt :  60.0 }  })
+    # 
+    # For greater than filtering to trigger, use:
+    # { topographyTopographicArea( first: 1,  filter : { calculatedAreaValue : { _gt :  60.0 }  })
 
     def resolve_topographyTopographicArea(self, info, filter={}, first=1, toid=None, featureCode=None, theme=None, calculatedAreaValue=None, reasonForChange=None, descriptiveGroup=None, make=None, physicalLevel=None, filterTag="_eq"):  
 
