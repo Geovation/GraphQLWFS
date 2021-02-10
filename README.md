@@ -39,3 +39,5 @@ Example:
 ```
 curl 127.0.0.1:5000 -H "Content-Type: application/json" -d '{ hello(count: 5, propertyName: "Type", literal: "Education") }'
 ```
+
+**Note 1**: As of this writing 05/02/2021, Hasura.io has a growing userbase with over 20k stars on Github and comparing with other alternatives on filter query design for GraphQL, Hasura.io documentation seem to be comprehensive and clear in design. Therefore, the query design schema has been chosen for this project to be as developer friendly as possible.
